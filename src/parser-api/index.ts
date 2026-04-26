@@ -1,9 +1,17 @@
 import { createRequire } from "node:module";
+import type {
+  AsyncAPIDocumentInterface,
+  Diagnostic,
+  Parser,
+} from "@asyncapi/parser";
 import { resolveInput, toParsedDocument } from "./utils.js";
 import type { ParsedDocument, ValidationIssue, ValidationResult } from "./types.js";
 
 const require = createRequire(import.meta.url);
-const { Parser } = require("@asyncapi/parser");
+const { Parser: ParserClass } = require("@asyncapi/parser") as {
+  // Parser options type exists on the package but is not re-exported from the entrypoint.
+  Parser: new (options?: object) => Parser;
+};
 
 const SEVERITY_MAP: Record<number, ValidationIssue["severity"]> = {
   0: "error",
@@ -12,19 +20,14 @@ const SEVERITY_MAP: Record<number, ValidationIssue["severity"]> = {
   3: "hint",
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toValidationIssues(diagnostics: any[]): ValidationIssue[] {
+function toValidationIssues(diagnostics: Diagnostic[]): ValidationIssue[] {
   return diagnostics.map((d) => {
     const severity =
       SEVERITY_MAP[typeof d.severity === "number" ? d.severity : 0] ?? "error";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const path = (d as any).path as (string | number)[] | undefined;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const code = (d as any).code as string | undefined;
     return {
       message: d.message,
-      code,
-      path,
+      code: typeof d.code === "string" ? d.code : undefined,
+      path: Array.isArray(d.path) ? d.path : undefined,
       severity,
     };
   });
@@ -46,14 +49,14 @@ export type {
  */
 export async function parseDocument(input: string): Promise<ParsedDocument> {
   const content = await resolveInput(input);
-  const parser = new Parser();
+  const parser = new ParserClass();
   const { document, diagnostics } = await parser.parse(content);
 
   const errors = diagnostics.filter(
     (d: { severity: number }) => d.severity === 0
   );
   if (!document) {
-    const msgs = errors.map((d: { message: string }) => d.message);
+    const msgs = errors.map((d: Diagnostic) => d.message);
     throw new Error(`Invalid AsyncAPI document:\n${msgs.join("\n")}`);
   }
 
@@ -67,7 +70,7 @@ export async function parseDocument(input: string): Promise<ParsedDocument> {
  */
 export async function validateDocument(input: string): Promise<ValidationResult> {
   const content = await resolveInput(input);
-  const parser = new Parser();
+  const parser = new ParserClass();
   const { document, diagnostics } = await parser.parse(content);
 
   const issues = toValidationIssues(diagnostics);
@@ -78,8 +81,7 @@ export async function validateDocument(input: string): Promise<ValidationResult>
     return { valid, issues };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const doc = document as any;
+  const doc: AsyncAPIDocumentInterface = document;
   return {
     valid: true,
     issues,
