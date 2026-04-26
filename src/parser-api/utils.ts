@@ -1,6 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import type {
+  AsyncAPIDocumentInterface,
+  ChannelInterface,
+  MessageInterface,
+  OperationInterface,
+  ServerInterface,
+} from "@asyncapi/parser";
+import type {
   ParsedChannel,
   ParsedDocument,
   ParsedMessage,
@@ -37,43 +44,50 @@ export async function resolveInput(input: string): Promise<string> {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function toParsedDocument(document: any): ParsedDocument {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const servers: ParsedServer[] = document.allServers().all().map((s: any) => ({
-    id: s.id(),
-    host: s.host(),
-    pathname: s.pathname() ?? undefined,
-    protocol: s.protocol(),
-    description: s.description() ?? undefined,
-  }));
+export function toParsedDocument(
+  document: AsyncAPIDocumentInterface
+): ParsedDocument {
+  const servers: ParsedServer[] = document
+    .allServers()
+    .all()
+    .map((s: ServerInterface) => ({
+      id: s.id(),
+      host: s.host(),
+      pathname: s.pathname() ?? undefined,
+      protocol: s.protocol(),
+      description: s.description() ?? undefined,
+    }));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const channels: ParsedChannel[] = document.allChannels().all().map((c: any) => ({
-    id: c.id(),
-    address: c.address() ?? null,
-    description: c.description() ?? undefined,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    messages: c.messages().all().map((m: any) => m.id()),
-  }));
+  const channels: ParsedChannel[] = document
+    .allChannels()
+    .all()
+    .map((c: ChannelInterface) => ({
+      id: c.id(),
+      address: c.address() ?? null,
+      description: c.description() ?? undefined,
+      messages: c.messages().all().map((m: MessageInterface) => m.id()),
+    }));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const operations: ParsedOperation[] = document.allOperations().all().map((o: any) => ({
-    id: o.id() ?? "",
-    action: o.action(),
-    channel: o.channels().all()[0]?.id() ?? "",
-    description: o.description() ?? undefined,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    messages: o.messages().all().map((m: any) => m.id()),
-  }));
+  const operations: ParsedOperation[] = document
+    .allOperations()
+    .all()
+    .map((o: OperationInterface) => ({
+      id: o.id() ?? "",
+      action: o.action(),
+      channel: o.channels().all()[0]?.id() ?? "",
+      description: o.description() ?? undefined,
+      messages: o.messages().all().map((m: MessageInterface) => m.id()),
+    }));
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const messages: ParsedMessage[] = document.allMessages().all().map((m: any) => ({
-    id: m.id(),
-    description: m.description() ?? undefined,
-    contentType: m.contentType() ?? undefined,
-    hasPayload: m.hasPayload(),
-  }));
+  const messages: ParsedMessage[] = document
+    .allMessages()
+    .all()
+    .map((m: MessageInterface) => ({
+      id: m.id(),
+      description: m.description() ?? undefined,
+      contentType: m.contentType() ?? undefined,
+      hasPayload: m.hasPayload(),
+    }));
 
   return {
     asyncapi: document.version(),
