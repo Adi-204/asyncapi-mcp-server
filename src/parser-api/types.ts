@@ -39,3 +39,26 @@ export interface ParsedDocument {
   operations: ParsedOperation[];
   messages: ParsedMessage[];
 }
+
+export type ValidationIssueSeverity = "error" | "warning" | "info" | "hint";
+
+export interface ValidationIssue {
+  message: string;
+  code?: string;
+  path?: (string | number)[];
+  severity: ValidationIssueSeverity;
+}
+
+/**
+ * Outcome of validating an AsyncAPI document. When `valid` is true, `summary`
+ * contains basic document identity; `issues` may still list non-error severities.
+ */
+export interface ValidationResult {
+  valid: boolean;
+  issues: ValidationIssue[];
+  summary?: {
+    asyncapi: string;
+    title: string;
+    version: string;
+  };
+}
