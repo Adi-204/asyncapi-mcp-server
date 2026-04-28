@@ -9,7 +9,7 @@ export const params = z.object({
   template: z
     .string()
     .describe(
-      "Template to use for generation. Use a baked-in template name from list_baked_templates (e.g. 'ts-websocket-client') or a full npm package name (e.g. '@asyncapi/html-template')"
+      "Template to use for generation. Use a baked-in template name (e.g. 'core-template-client-websocket-javascript') or a full npm package name (e.g. '@asyncapi/html-template'). Use list_tools with keyword 'template' to discover available templates."
     ),
   targetDir: z
     .string()
@@ -20,7 +20,7 @@ export const params = z.object({
     .record(z.string(), z.string())
     .optional()
     .describe(
-      "Optional template-specific parameters as key-value pairs. Each template defines its own params — use list_baked_templates or get_template_info to discover available params."
+      "Optional template-specific parameters as key-value pairs. Each template defines its own params — consult the template's npm page or README for available options."
     ),
 });
 
