@@ -1,16 +1,16 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { validateDocument } from "../../api/parser/index.js";
+import { lintSpec } from "../../api/spectral/index.js";
 
-export const name = "validate_document";
+export const name = "lint_spec";
 
-export const description = `AsyncAPI MCP server — validate an AsyncAPI document for schema and Spectral rules.
-Returns a JSON object with { valid, issues, summary? }.
-Accepts either raw YAML/JSON content or an absolute file path (e.g. /path/to/asyncapi.yaml or C:\\path\\to\\asyncapi.yaml).`;
+export const description = `Lint an AsyncAPI document with Spectral's built-in AsyncAPI ruleset (spectral:asyncapi), or an optional custom ruleset file.
+Returns JSON { diagnostics: [{ rule, severity, message, path, line }] }.
+Source may be raw YAML/JSON or an absolute file path.`;
 
-export const execute = async ({ document }: QueryParams) => {
+export const execute = async ({ source, ruleset }: QueryParams) => {
   try {
-    const result = await validateDocument(document);
+    const result = await lintSpec(source, { ruleset });
     return {
       content: [
         {

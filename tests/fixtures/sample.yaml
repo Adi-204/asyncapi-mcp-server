@@ -1,17 +1,17 @@
 asyncapi: 3.0.0
 info:
-  title: Test Chat API
+  title: Test WebSocket Chat API
   version: 1.0.0
-  description: A test AsyncAPI document for unit tests
+  description: A test AsyncAPI document shared across MCP tool tests
 
 servers:
   production:
-    host: broker.example.com:1883
-    protocol: mqtt
+    host: ws.example.com
+    protocol: ws
 
 channels:
   chat:
-    address: chat/messages
+    address: /chat
     messages:
       chatMessage:
         $ref: '#/components/messages/ChatMessage'
@@ -19,6 +19,12 @@ channels:
 operations:
   sendMessage:
     action: send
+    channel:
+      $ref: '#/channels/chat'
+    messages:
+      - $ref: '#/channels/chat/messages/chatMessage'
+  receiveMessage:
+    action: receive
     channel:
       $ref: '#/channels/chat'
     messages:
@@ -33,4 +39,6 @@ components:
         type: object
         properties:
           text:
+            type: string
+          sender:
             type: string

@@ -1,7 +1,7 @@
 import { createRequire } from "node:module";
 import { readdir, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
-import { resolveInput } from "../parser-api/utils.js";
+import { resolveInput } from "../helpers.js";
 import type {
   GenerateOptions,
   GenerateResult,

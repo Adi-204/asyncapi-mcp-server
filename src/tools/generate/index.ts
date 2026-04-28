@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type GenerateParams } from "./params.js";
-import { generateCode } from "../../generator-api/index.js";
+import { generateCode } from "../../api/generator/index.js";
 
 export const name = "generate";
 
