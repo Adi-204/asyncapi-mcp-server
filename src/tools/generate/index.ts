@@ -6,7 +6,7 @@ export const name = "generate";
 
 export const description = `AsyncAPI MCP server — generate code or documentation from an AsyncAPI document using a template.
 Writes generated files to the specified target directory and returns a listing of all created files.
-Use list_baked_templates first to discover available templates and their supported protocols/targets.
+Use list_tools with keyword 'template' to discover available templates.
 Accepts either raw YAML/JSON content or an absolute file path for the AsyncAPI document.`;
 
 export const execute = async ({

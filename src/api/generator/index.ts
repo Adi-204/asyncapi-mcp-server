@@ -6,17 +6,11 @@ import type {
   GenerateOptions,
   GenerateResult,
   GeneratedFile,
-  TemplateFilter,
-  TemplateInfo,
 } from "./types.js";
 
 const require = createRequire(import.meta.url);
 const generatorPkg = require("@asyncapi/generator");
 const GeneratorClass = generatorPkg.default ?? generatorPkg;
-
-export const listBakedInTemplates = (
-  filter?: TemplateFilter
-): TemplateInfo[] => generatorPkg.listBakedInTemplates(filter);
 
 async function walkDir(dir: string, root: string): Promise<GeneratedFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -71,6 +65,4 @@ export type {
   GenerateOptions,
   GenerateResult,
   GeneratedFile,
-  TemplateFilter,
-  TemplateInfo,
 } from "./types.js";
