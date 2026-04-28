@@ -4,8 +4,13 @@ import type {
   Diagnostic,
   Parser,
 } from "@asyncapi/parser";
-import { resolveInput, toParsedDocument } from "./utils.js";
-import type { ParsedDocument, ValidationIssue, ValidationResult } from "./types.js";
+import { resolveInput } from "../helpers.js";
+import { toParsedDocument } from "./utils.js";
+import type {
+  ParsedDocument,
+  ValidationIssue,
+  ValidationResult,
+} from "./types.js";
 
 const require = createRequire(import.meta.url);
 const { Parser: ParserClass } = require("@asyncapi/parser") as {
@@ -68,7 +73,9 @@ export async function parseDocument(input: string): Promise<ParsedDocument> {
  * @asyncapi/parser. `valid` is true when a document model is produced and there
  * are no error-severity diagnostics.
  */
-export async function validateDocument(input: string): Promise<ValidationResult> {
+export async function validateDocument(
+  input: string
+): Promise<ValidationResult> {
   const content = await resolveInput(input);
   const parser = new ParserClass();
   const { document, diagnostics } = await parser.parse(content);

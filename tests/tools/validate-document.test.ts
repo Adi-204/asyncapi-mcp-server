@@ -43,7 +43,7 @@ describe("validate_document", () => {
     expect(body.valid).toBe(true);
     expect(body.summary).toBeDefined();
     expect(body.summary!.asyncapi).toBe("3.0.0");
-    expect(body.summary!.title).toBe("Test Chat API");
+    expect(body.summary!.title).toBe("Test WebSocket Chat API");
     expect(body.summary!.version).toBe("1.0.0");
   });
 
@@ -58,7 +58,7 @@ describe("validate_document", () => {
     const body = JSON.parse(content[0].text) as { valid: boolean; summary?: { title: string } };
 
     expect(body.valid).toBe(true);
-    expect(body.summary?.title).toBe("Test Chat API");
+    expect(body.summary?.title).toBe("Test WebSocket Chat API");
   });
 
   it("returns valid: false for invalid content", async () => {

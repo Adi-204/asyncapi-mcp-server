@@ -7,10 +7,7 @@ import { tmpdir } from "node:os";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { createTestClient } from "../helpers.js";
 
-const WS_FIXTURE_PATH = resolve(
-  import.meta.dirname!,
-  "../fixtures/websocket.yaml"
-);
+const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
 
 describe("generate", () => {
   let client: Client;
@@ -46,7 +43,7 @@ describe("generate", () => {
   });
 
   it("generates files from raw YAML with a baked-in template", async () => {
-    const yaml = await readFile(WS_FIXTURE_PATH, "utf-8");
+    const yaml = await readFile(FIXTURE_PATH, "utf-8");
     const targetDir = await makeTempDir();
 
     const result = await client.callTool({
@@ -80,7 +77,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: WS_FIXTURE_PATH,
+        document: FIXTURE_PATH,
         template: "core-template-client-websocket-javascript",
         targetDir,
         templateParams: { server: "production" },
@@ -112,7 +109,7 @@ describe("generate", () => {
   }, 60_000);
 
   it("returns error when required template params are missing", async () => {
-    const yaml = await readFile(WS_FIXTURE_PATH, "utf-8");
+    const yaml = await readFile(FIXTURE_PATH, "utf-8");
     const targetDir = await makeTempDir();
 
     const result = await client.callTool({

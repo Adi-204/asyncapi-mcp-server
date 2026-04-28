@@ -38,6 +38,10 @@
     "@asyncapi/generator": "^3.2.1",
     "@asyncapi/parser": "^3.6.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "@stoplight/spectral-core": "^1.22.0",
+    "@stoplight/spectral-ruleset-bundler": "^1.5.0",
+    "@stoplight/spectral-rulesets": "^1.22.0",
+    "@stoplight/spectral-runtime": "^1.1.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

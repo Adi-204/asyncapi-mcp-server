@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { parseDocument } from "../../parser-api/index.js";
+import { parseDocument } from "../../api/parser/index.js";
 
 export const name = "parse_document";
 

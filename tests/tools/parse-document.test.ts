@@ -37,26 +37,30 @@ describe("parse_document", () => {
     const parsed = JSON.parse(content[0].text);
 
     expect(parsed.asyncapi).toBe("3.0.0");
-    expect(parsed.title).toBe("Test Chat API");
+    expect(parsed.title).toBe("Test WebSocket Chat API");
     expect(parsed.version).toBe("1.0.0");
     expect(parsed.description).toBe(
-      "A test AsyncAPI document for unit tests"
+      "A test AsyncAPI document shared across MCP tool tests"
     );
 
     expect(parsed.servers).toHaveLength(1);
     expect(parsed.servers[0]).toMatchObject({
       id: "production",
-      host: "broker.example.com:1883",
-      protocol: "mqtt",
+      host: "ws.example.com",
+      protocol: "ws",
     });
 
     expect(parsed.channels).toHaveLength(1);
     expect(parsed.channels[0].id).toBe("chat");
-    expect(parsed.channels[0].address).toBe("chat/messages");
+    expect(parsed.channels[0].address).toBe("/chat");
 
-    expect(parsed.operations).toHaveLength(1);
+    expect(parsed.operations).toHaveLength(2);
     expect(parsed.operations[0]).toMatchObject({
       action: "send",
+      channel: "chat",
+    });
+    expect(parsed.operations[1]).toMatchObject({
+      action: "receive",
       channel: "chat",
     });
 
@@ -73,7 +77,7 @@ describe("parse_document", () => {
     const content = result.content as Array<{ type: string; text: string }>;
     const parsed = JSON.parse(content[0].text);
 
-    expect(parsed.title).toBe("Test Chat API");
+    expect(parsed.title).toBe("Test WebSocket Chat API");
     expect(parsed.servers).toHaveLength(1);
   });
 

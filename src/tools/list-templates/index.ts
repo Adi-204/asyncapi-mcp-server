@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { listBakedInTemplates } from "../../generator-api/index.js";
+import { listBakedInTemplates } from "../../api/generator/index.js";
 
 export const name = "list_baked_templates";
 
