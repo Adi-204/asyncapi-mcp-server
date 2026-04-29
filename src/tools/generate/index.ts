@@ -13,7 +13,7 @@ export const description = buildToolDescription({
   summary:
     "Generate code or documentation from an AsyncAPI document using an AsyncAPI Generator template.",
   inputs: [
-    "`document`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
+    "`source`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
     "`template`: a baked-in template id OR an npm template package name (e.g. `@asyncapi/html-template`)",
     "`targetDir`: absolute directory path where files will be written (created if missing)",
     "`templateParams` (optional): string key/value map passed to the template",
@@ -27,7 +27,7 @@ export const description = buildToolDescription({
   examples: [
     {
       args: {
-        document: "C:\\\\specs\\\\asyncapi.yaml",
+        source: "C:\\\\specs\\\\asyncapi.yaml",
         template: "@asyncapi/html-template",
         targetDir: "C:\\\\tmp\\\\asyncapi-gen",
         templateParams: { title: "My API" },
@@ -37,14 +37,14 @@ export const description = buildToolDescription({
 });
 
 export const execute = async ({
-  document,
+  source,
   template,
   targetDir,
   templateParams,
 }: GenerateParams) => {
   try {
     const result = await generateCode({
-      document,
+      source,
       template,
       targetDir,
       templateParams,

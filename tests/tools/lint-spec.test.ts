@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { createTestClient } from "../helpers.js";
 
-const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
+const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/asyncapi-v3.yaml");
 
 type LintBody = {
   diagnostics: {

@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { createTestClient } from "../helpers.js";
 
-const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
+const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/asyncapi-v3.yaml");
 
 describe("validate_document", () => {
   let client: Client;
@@ -29,7 +29,7 @@ describe("validate_document", () => {
     const yaml = await readFile(FIXTURE_PATH, "utf-8");
     const result = await client.callTool({
       name: "validate_document",
-      arguments: { document: yaml },
+      arguments: { source: yaml },
     });
 
     expect(result.isError).toBeFalsy();
@@ -42,7 +42,7 @@ describe("validate_document", () => {
 
     expect(body.valid).toBe(true);
     expect(body.summary).toBeDefined();
-    expect(body.summary!.asyncapi).toBe("3.0.0");
+    expect(body.summary!.asyncapi).toBe("3.1.0");
     expect(body.summary!.title).toBe("Test WebSocket Chat API");
     expect(body.summary!.version).toBe("1.0.0");
   });
@@ -50,7 +50,7 @@ describe("validate_document", () => {
   it("validates from an absolute file path", async () => {
     const result = await client.callTool({
       name: "validate_document",
-      arguments: { document: FIXTURE_PATH },
+      arguments: { source: FIXTURE_PATH },
     });
 
     expect(result.isError).toBeFalsy();
@@ -64,7 +64,7 @@ describe("validate_document", () => {
   it("returns valid: false for invalid content", async () => {
     const result = await client.callTool({
       name: "validate_document",
-      arguments: { document: "not: valid: asyncapi: doc" },
+      arguments: { source: "not: valid: asyncapi: doc" },
     });
 
     expect(result.isError).toBeFalsy();
@@ -79,7 +79,7 @@ describe("validate_document", () => {
   it("returns isError for nonexistent file path", async () => {
     const result = await client.callTool({
       name: "validate_document",
-      arguments: { document: "/tmp/does-not-exist-12345.yaml" },
+      arguments: { source: "/tmp/does-not-exist-12345.yaml" },
     });
 
     expect(result.isError).toBe(true);

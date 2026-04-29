@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { createTestClient } from "../helpers.js";
 
-const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
+const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/asyncapi-v3.yaml");
 
 describe("parse_document", () => {
   let client: Client;
@@ -29,14 +29,14 @@ describe("parse_document", () => {
     const yaml = await readFile(FIXTURE_PATH, "utf-8");
     const result = await client.callTool({
       name: "parse_document",
-      arguments: { document: yaml },
+      arguments: { source: yaml },
     });
 
     expect(result.isError).toBeFalsy();
     const content = result.content as Array<{ type: string; text: string }>;
     const parsed = JSON.parse(content[0].text);
 
-    expect(parsed.asyncapi).toBe("3.0.0");
+    expect(parsed.asyncapi).toBe("3.1.0");
     expect(parsed.title).toBe("Test WebSocket Chat API");
     expect(parsed.version).toBe("1.0.0");
     expect(parsed.description).toBe(
@@ -70,7 +70,7 @@ describe("parse_document", () => {
   it("parses from an absolute file path", async () => {
     const result = await client.callTool({
       name: "parse_document",
-      arguments: { document: FIXTURE_PATH },
+      arguments: { source: FIXTURE_PATH },
     });
 
     expect(result.isError).toBeFalsy();
@@ -84,7 +84,7 @@ describe("parse_document", () => {
   it("returns error for invalid YAML", async () => {
     const result = await client.callTool({
       name: "parse_document",
-      arguments: { document: "not: valid: asyncapi: doc" },
+      arguments: { source: "not: valid: asyncapi: doc" },
     });
 
     expect(result.isError).toBe(true);
@@ -95,7 +95,7 @@ describe("parse_document", () => {
   it("returns error for nonexistent file path", async () => {
     const result = await client.callTool({
       name: "parse_document",
-      arguments: { document: "/tmp/does-not-exist-12345.yaml" },
+      arguments: { source: "/tmp/does-not-exist-12345.yaml" },
     });
 
     expect(result.isError).toBe(true);

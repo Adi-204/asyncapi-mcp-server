@@ -5,7 +5,7 @@ export const params = z
     source: z
       .string()
       .describe(
-        "AsyncAPI document to lint — raw YAML/JSON content or an absolute file path ending in .yaml, .yml, or .json"
+        "AsyncAPI spec as raw YAML/JSON or an absolute file path ending in .yaml, .yml, or .json"
       ),
     ruleset: z
       .string()

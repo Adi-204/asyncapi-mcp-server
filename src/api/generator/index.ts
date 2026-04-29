@@ -40,9 +40,9 @@ async function walkDir(dir: string, root: string): Promise<GeneratedFile[]> {
 export async function generateCode(
   options: GenerateOptions
 ): Promise<GenerateResult> {
-  const { document, template, targetDir, templateParams } = options;
+  const { source, template, targetDir, templateParams } = options;
 
-  const content = await resolveInput(document);
+  const content = await resolveInput(source);
 
   const generator = new GeneratorClass(template, targetDir, {
     forceWrite: true,

@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { createTestClient } from "../helpers.js";
 
-const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
+const FIXTURE_PATH = resolve(import.meta.dirname!, "../fixtures/asyncapi-v3.yaml");
 
 describe("generate", () => {
   let client: Client;
@@ -49,7 +49,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: yaml,
+        source: yaml,
         template: "core-template-client-websocket-javascript",
         targetDir,
         templateParams: { server: "production" },
@@ -77,7 +77,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: FIXTURE_PATH,
+        source: FIXTURE_PATH,
         template: "core-template-client-websocket-javascript",
         targetDir,
         templateParams: { server: "production" },
@@ -97,7 +97,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: "not: valid: asyncapi",
+        source: "not: valid: asyncapi",
         template: "core-template-client-websocket-javascript",
         targetDir,
       },
@@ -115,7 +115,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: yaml,
+        source: yaml,
         template: "core-template-client-websocket-javascript",
         targetDir,
       },
@@ -132,7 +132,7 @@ describe("generate", () => {
     const result = await client.callTool({
       name: "generate",
       arguments: {
-        document: "/tmp/does-not-exist-12345.yaml",
+        source: "/tmp/does-not-exist-12345.yaml",
         template: "core-template-client-websocket-javascript",
         targetDir,
       },
