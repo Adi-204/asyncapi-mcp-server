@@ -73,7 +73,7 @@ Generate code or documentation from a template using **[@asyncapi/generator](htt
 
 - **Node.js** 24.11 or newer (see `package.json` `engines`).
 
-No external API key is required for the libraries bundled into this server.
+No external API key is required. Runtime dependencies are installed with the package as normal npm modules (this is not a single-file bundle).
 
 ---
 
@@ -90,6 +90,8 @@ Or run on demand:
 ```bash
 npx -y asyncapi-mcp-server
 ```
+
+The first `npx` run can take a minute while npm installs transitive dependencies. If your MCP client times out, install once globally (`npm install -g asyncapi-mcp-server`) and configure the client to run the `asyncapi-mcp-server` binary instead of `npx`.
 
 ### Local development build
 
