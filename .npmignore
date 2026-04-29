@@ -1,0 +1,24 @@
+# Source and config — only dist/ is shipped
+src/
+tests/
+tsconfig.json
+vitest.config.*
+eslint.config.*
+.eslintrc*
+
+# Dev and CI
+.github/
+.vscode/
+.cursor/
+coverage/
+node_modules/
+*.tsbuildinfo
+
+# Environment and secrets
+.env
+.env.*
+
+# Docs not needed in the package
+DEVELOPMENT.md
+CONTRIBUTING.md
+CHANGELOG.md

@@ -7,18 +7,39 @@
     "asyncapi-mcp-server": "dist/index.js"
   },
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "engines": {
     "node": ">=24.11"
   },
+  "author": "Adi Boghawala boghawalaadi@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adi-204/asyncapi-mcp-server.git"
+  },
+  "homepage": "https://github.com/Adi-204/asyncapi-mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/Adi-204/asyncapi-mcp-server/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "clean": "shx rm -rf dist",
+    "build": "npm run clean && tsc && shx chmod +x dist/*.js",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "test": "vitest run",
     "test:watch": "vitest",
-    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "prepublishOnly": "npm run build && npm test && npm run lint"
   },
   "keywords": [
     "asyncapi",
@@ -30,7 +51,9 @@
   ],
   "license": "Apache-2.0",
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "dependencies": {
     "@asyncapi/converter": "^2.0.1",
