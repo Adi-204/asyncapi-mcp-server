@@ -2,17 +2,42 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { ConvertOptions } from "@asyncapi/converter";
 import { convertAsyncApiSpec } from "../../api/converter/index.js";
 import params, { type QueryParams } from "./params.js";
+import { buildToolDescription } from "../_meta.js";
 
 export const name = "convert_spec";
 
-export const description = `Convert an AsyncAPI document toward a newer AsyncAPI version (1.x → 2.x → 3.x) using @asyncapi/converter.
-Returns JSON with { document, inputFormat }. The document field is YAML or JSON text depending on outputFormat.
+export const title = "Convert AsyncAPI version";
 
-Inputs: source (inline YAML/JSON or file path), targetVersion (e.g. "3.0.0"), optional outputFormat (preserve | yaml | json), optional options.v2tov3 for 2→3 migration (pointOfView application|client, useChannelIdExtension, etc.).
-
-Same AsyncAPI version as targetVersion: only changes serialization when outputFormat differs from the input (YAML ↔ JSON). Upgrades only — downgrades are not supported.
-
-2.x → 3.x: input should be valid AsyncAPI; external $refs are not resolved; see AsyncAPI converter docs for publish/subscribe mapping and known limitations.`;
+export const description = buildToolDescription({
+  name,
+  title,
+  summary:
+    "Convert an AsyncAPI document to a newer AsyncAPI version using `@asyncapi/converter`.",
+  inputs: [
+    "`source`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
+    "`targetVersion`: target AsyncAPI version (e.g. `\"3.0.0\"`)",
+    "`outputFormat` (optional): `preserve` | `yaml` | `json`",
+    "`options` (optional): passthrough converter options (notably `options.v2tov3` for 2.x → 3.x)",
+  ],
+  returns: [
+    "`{ document, inputFormat }` where `document` is YAML/JSON text (depending on `outputFormat`)",
+  ],
+  notes: [
+    "Upgrades only — downgrades are not supported.",
+    "External `$ref`s are not resolved during conversion.",
+    "If `targetVersion` matches the input version, this can still change serialization when `outputFormat` forces YAML/JSON.",
+  ],
+  examples: [
+    {
+      args: {
+        source: "C:\\\\specs\\\\asyncapi-2.6.0.yaml",
+        targetVersion: "3.0.0",
+        outputFormat: "yaml",
+        options: { v2tov3: { pointOfView: "application" } },
+      },
+    },
+  ],
+});
 
 export const execute = async ({
   source,
@@ -53,7 +78,7 @@ export const register = (server: McpServer) => {
   server.registerTool(
     name,
     {
-      title: name,
+      title,
       description,
       inputSchema: params.shape,
     },
@@ -61,4 +86,4 @@ export const register = (server: McpServer) => {
   );
 };
 
-export default { name, description, inputSchema: params.shape, execute, register };
+export default { name, title, description, inputSchema: params.shape, execute, register };
