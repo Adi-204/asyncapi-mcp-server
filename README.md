@@ -71,15 +71,21 @@ Generate code or documentation from a template using **[@asyncapi/generator](htt
 
 ## Requirements
 
-- **Node.js** 22 or newer.
+- **Node.js** 24.11 or newer (see `package.json` `engines`).
 
-No external API key is required — all AsyncAPI libraries are bundled into the server.
+No external API key is required for the libraries bundled into this server.
 
 ---
 
 ## Installation
 
-### From npm
+### From npm (when published)
+
+```bash
+npm install -g asyncapi-mcp-server
+```
+
+Or run on demand:
 
 ```bash
 npx -y asyncapi-mcp-server
@@ -88,7 +94,7 @@ npx -y asyncapi-mcp-server
 ### Local development build
 
 ```bash
-git clone https://github.com/Adi-204/asyncapi-mcp-server.git
+git clone <your-repo-url> asyncapi-mcp-server
 cd asyncapi-mcp-server
 npm install
 npm run build
@@ -147,7 +153,7 @@ npm install
 npm run build
 ```
 
-The build pipeline compiles TypeScript (`tsc`) then bundles everything into a single `dist/index.js` via esbuild. All runtime dependencies are inlined — the published package has **zero npm dependencies**, so `npx` starts instantly.
+The compiled entrypoint is `dist/index.js` (ESM, executable bit set on Unix via `shx chmod`).
 
 ---
 
