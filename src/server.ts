@@ -1,15 +1,11 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import tools from "./tools/index.js";
 
-const pkgPath = join(dirname(fileURLToPath(import.meta.url)), "..", "package.json");
-const { name, version } = JSON.parse(readFileSync(pkgPath, "utf8")) as {
-  name: string;
-  version: string;
-};
+declare const __PKG_NAME__: string;
+declare const __PKG_VERSION__: string;
+
+const name: string = typeof __PKG_NAME__ !== "undefined" ? __PKG_NAME__ : "asyncapi-mcp-server";
+const version: string = typeof __PKG_VERSION__ !== "undefined" ? __PKG_VERSION__ : "0.0.0";
 
 export default function createServer(): McpServer {
   const server = new McpServer({

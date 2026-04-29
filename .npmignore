@@ -1,7 +1,8 @@
-# Source and config — only dist/ is shipped
+# Source and config — only dist/index.js is shipped
 src/
 tests/
 tsconfig.json
+esbuild.config.mjs
 vitest.config.*
 eslint.config.*
 .eslintrc*
