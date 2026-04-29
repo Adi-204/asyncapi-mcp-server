@@ -1,13 +1,40 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type GenerateParams } from "./params.js";
 import { generateCode } from "../../api/generator/index.js";
+import { buildToolDescription } from "../_meta.js";
 
 export const name = "generate";
 
-export const description = `AsyncAPI MCP server — generate code or documentation from an AsyncAPI document using a template.
-Writes generated files to the specified target directory and returns a listing of all created files.
-Use list_tools with keyword 'template' to discover available templates.
-Accepts either raw YAML/JSON content or an absolute file path for the AsyncAPI document.`;
+export const title = "Generate code/docs from template";
+
+export const description = buildToolDescription({
+  name,
+  title,
+  summary:
+    "Generate code or documentation from an AsyncAPI document using an AsyncAPI Generator template.",
+  inputs: [
+    "`document`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
+    "`template`: a baked-in template id OR an npm template package name (e.g. `@asyncapi/html-template`)",
+    "`targetDir`: absolute directory path where files will be written (created if missing)",
+    "`templateParams` (optional): string key/value map passed to the template",
+  ],
+  returns: [
+    "JSON describing generated output (including a list of created files and their locations).",
+  ],
+  notes: [
+    "This tool writes to disk under `targetDir` (ensure it’s safe/expected).",
+  ],
+  examples: [
+    {
+      args: {
+        document: "C:\\\\specs\\\\asyncapi.yaml",
+        template: "@asyncapi/html-template",
+        targetDir: "C:\\\\tmp\\\\asyncapi-gen",
+        templateParams: { title: "My API" },
+      },
+    },
+  ],
+});
 
 export const execute = async ({
   document,
@@ -48,7 +75,7 @@ export const register = (server: McpServer) => {
   server.registerTool(
     name,
     {
-      title: name,
+      title,
       description,
       inputSchema: params.shape,
     },
@@ -58,6 +85,7 @@ export const register = (server: McpServer) => {
 
 export default {
   name,
+  title,
   description,
   inputSchema: params.shape,
   execute,

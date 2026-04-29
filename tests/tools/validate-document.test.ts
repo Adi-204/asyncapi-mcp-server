@@ -22,7 +22,7 @@ describe("validate_document", () => {
     const { tools } = await client.listTools();
     const tool = tools.find((t) => t.name === "validate_document");
     expect(tool).toBeDefined();
-    expect(tool!.description).toContain("validate");
+    expect(tool!.description?.toLowerCase()).toContain("validate");
   });
 
   it("returns valid: true for good YAML content", async () => {
