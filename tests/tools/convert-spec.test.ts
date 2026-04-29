@@ -8,7 +8,7 @@ import {
   parseAsyncApiWireText,
 } from "../../src/api/converter/index.js";
 
-const FIXTURE_V3_PATH = resolve(import.meta.dirname!, "../fixtures/sample.yaml");
+const FIXTURE_V3_PATH = resolve(import.meta.dirname!, "../fixtures/asyncapi-v3.yaml");
 const FIXTURE_V2_PATH = resolve(
   import.meta.dirname!,
   "../fixtures/asyncapi-v2-min.yaml"
@@ -29,19 +29,19 @@ describe("convert_spec API", () => {
     const yaml = await readFile(FIXTURE_V3_PATH, "utf-8");
     const result = await convertAsyncApiSpec({
       source: yaml,
-      targetVersion: "3.0.0",
+      targetVersion: "3.1.0",
       outputFormat: "json",
     });
     expect(result.inputFormat).toBe("yaml");
     const parsed = JSON.parse(result.document) as { asyncapi: string };
-    expect(parsed.asyncapi).toBe("3.0.0");
+    expect(parsed.asyncapi).toBe("3.1.0");
   });
 
   it("same version + preserve returns original string when source is a file path", async () => {
     const yaml = await readFile(FIXTURE_V3_PATH, "utf-8");
     const result = await convertAsyncApiSpec({
       source: FIXTURE_V3_PATH,
-      targetVersion: "3.0.0",
+      targetVersion: "3.1.0",
       outputFormat: "preserve",
     });
     expect(result.document).toBe(yaml);

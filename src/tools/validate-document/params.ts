@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const params = z
   .object({
-    document: z
+    source: z
       .string()
       .describe(
-        "AsyncAPI document — either raw YAML/JSON content or an absolute file path ending in .yaml, .yml, or .json"
+        "AsyncAPI spec as raw YAML/JSON or an absolute file path ending in .yaml, .yml, or .json"
       ),
   })
   .describe("Parameters for validate_document.");

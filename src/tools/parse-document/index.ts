@@ -13,7 +13,7 @@ export const description = buildToolDescription({
   summary:
     "Parse an AsyncAPI document and return a structured summary (servers, channels, operations, messages, and metadata).",
   inputs: [
-    "`document`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
+    "`source`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
   ],
   returns: ["JSON summary of the document model (best-effort; no code generation)."],
   notes: [
@@ -22,15 +22,15 @@ export const description = buildToolDescription({
   examples: [
     {
       args: {
-        document: "C:\\\\specs\\\\asyncapi.yaml",
+        source: "C:\\\\specs\\\\asyncapi.yaml",
       },
     },
   ],
 });
 
-export const execute = async ({ document }: QueryParams) => {
+export const execute = async ({ source }: QueryParams) => {
   try {
-    const parsed = await parseDocument(document);
+    const parsed = await parseDocument(source);
     return {
       content: [
         {

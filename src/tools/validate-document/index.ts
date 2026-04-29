@@ -13,7 +13,7 @@ export const description = buildToolDescription({
   summary:
     "Validate an AsyncAPI document and return `valid` plus a list of validation issues from the parser pipeline.",
   inputs: [
-    "`document`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
+    "`source`: raw YAML/JSON text OR an absolute path to a `.yaml`, `.yml`, or `.json` file",
   ],
   returns: [
     "`{ valid, issues, summary? }` where `issues` include severity/message/path (and optional code)",
@@ -24,15 +24,15 @@ export const description = buildToolDescription({
   examples: [
     {
       args: {
-        document: "/abs/path/to/asyncapi.json",
+        source: "/abs/path/to/asyncapi.json",
       },
     },
   ],
 });
 
-export const execute = async ({ document }: QueryParams) => {
+export const execute = async ({ source }: QueryParams) => {
   try {
-    const result = await validateDocument(document);
+    const result = await validateDocument(source);
     return {
       content: [
         {

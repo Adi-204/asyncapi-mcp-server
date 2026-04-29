@@ -33,7 +33,7 @@ export const params = z.object({
   source: z
     .string()
     .describe(
-      "AsyncAPI document — raw YAML/JSON content or an absolute file path (.yaml, .yml, .json)"
+      "AsyncAPI spec as raw YAML/JSON or an absolute file path (.yaml, .yml, .json)"
     ),
   targetVersion: z
     .string()

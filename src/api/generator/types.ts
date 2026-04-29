@@ -1,5 +1,5 @@
 export interface GenerateOptions {
-  document: string;
+  source: string;
   template: string;
   targetDir: string;
   templateParams?: Record<string, string>;

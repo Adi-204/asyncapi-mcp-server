@@ -8,7 +8,7 @@ The server communicates over **stdio** (subprocess transport), which matches how
 
 ## Tools
 
-Each tool accepts an AsyncAPI document either as **inline YAML/JSON** or an **absolute path** to a `.yaml`, `.yml`, or `.json` file (see per-tool parameter names below).
+Each tool takes the AsyncAPI **spec** as **`source`**: either inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file.
 
 ### `parse_document`
 
@@ -16,7 +16,7 @@ Parse an AsyncAPI document and return a structured summary (servers, channels, o
 
 **Parameters:**
 
-- `document` (string, required): Raw YAML/JSON content or absolute file path to the spec.
+- `source` (string, required): Raw YAML/JSON content or absolute file path to the spec.
 
 ### `validate_document`
 
@@ -24,7 +24,7 @@ Validate the document for structural correctness using the AsyncAPI parser and r
 
 **Parameters:**
 
-- `document` (string, required): Raw YAML/JSON content or absolute file path.
+- `source` (string, required): Raw YAML/JSON content or absolute file path.
 
 ### `lint_spec`
 
@@ -62,7 +62,7 @@ Generate code or documentation from a template using **[@asyncapi/generator](htt
 
 **Parameters:**
 
-- `document` (string, required): Raw YAML/JSON content or absolute file path.
+- `source` (string, required): Raw YAML/JSON content or absolute file path.
 - `template` (string, required): Baked-in template id (if your environment has one) or a full npm template package (e.g. `@asyncapi/html-template`).
 - `targetDir` (string, required): **Absolute** directory path for generated files (created if missing).
 - `templateParams` (object, optional): String key-value map of template-specific parameters.

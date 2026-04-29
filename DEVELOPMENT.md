@@ -26,7 +26,7 @@ The entrypoint is `dist/index.js`. The published CLI binary name is `asyncapi-mc
 | `src/server.ts` | Instantiates the MCP server and registers all tools |
 | `src/tools/` | One folder per tool — `params.ts` (Zod) + `index.ts` (`register`, `execute`) |
 | `src/api/` | Wrappers around AsyncAPI and related libraries (parser, spectral, converter, generator, modelina) |
-| `src/api/helpers.ts` | Shared resolution of `document` / `source` (inline vs file path) |
+| `src/api/helpers.ts` | Shared resolution of tool `source` input (inline YAML/JSON vs file path) |
 | `tests/` | Vitest tests; `tests/helpers.ts` for MCP client test harness |
 
 ## npm scripts
