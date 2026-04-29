@@ -1,19 +1,54 @@
-# Contributing
+# Contributing to AsyncAPI MCP Server
 
-Thank you for helping improve the AsyncAPI MCP server. This document describes how we work together on this repository.
+We want contributing to this repository to be straightforward and predictable. This document describes how we work together on the **asyncapi-mcp-server** project (MCP tools, `src/tools/`, `src/api/`).
 
-## Before you start
+## Table of Contents
 
-- **Bugs and small fixes:** Open an issue or a PR with a short description of the problem and how you reproduced it.
-- **Larger changes:** Prefer opening an issue first so maintainers can agree on scope (new tools, transport modes, breaking schema changes, etc.). Describe the motivation and intended behavior in the issue so reviewers have context.
+- [Contribution Flow](#contribution-flow)
+- [Issues](#issues)
+- [Pull Requests](#pull-requests)
+- [Conventional Commits](#conventional-commits)
+- [Code Review](#code-review)
+- [Development Environment](#development-environment)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
 
-## Pull requests
+
+## Contribution Flow
+
+Pull requests may be declined when they do not fit project goals or quality bars. The usual path looks like this:
+
+```
+    ┌───────────────────────┐
+    │   Open an issue       │
+    │   (bug or feature;    │
+    │    optional for tiny  │
+    │    fixes)             │
+    └───────────────────────┘
+               ⇩
+    ┌───────────────────────┐
+    │   Open a Pull         │
+    │   Request (aligned    │
+    │   with discussion)    │
+    └───────────────────────┘
+               ⇩
+    ┌───────────────────────┐
+    │   Review, CI, merge   │
+    │   (see Conventional   │
+    │    Commits below)     │
+    └───────────────────────┘
+```
+
+## Issues
+
+Use [GitHub issues](https://github.com/Adi-204/asyncapi-mcp-server/issues) for **bugs** and **feature requests**. 
+
+## Pull Requests
 
 1. **Branch** from the default branch with a descriptive name (e.g. `fix/lint-spec-ruleset-path`).
-2. **Keep changes focused** — one logical concern per PR is easier to review.
-3. **Match existing style** — TypeScript, ESM imports, Zod schemas for tool inputs, and the same patterns as neighboring `src/tools/*/index.ts` modules.
-4. **Add or update tests** when behavior changes. New tools should include a Vitest file under `tests/tools/`.
-5. **Run checks locally:**
+2. **Match existing patterns** — TypeScript, ESM, Zod for tool inputs; mirror neighboring `src/tools/*/index.ts` modules.
+3. **Tests** — Add or update tests when behavior changes; new tools should include Vitest coverage under `tests/tools/`.
+4. **Local checks** — Before pushing:
 
    ```bash
    npm run build
@@ -21,17 +56,33 @@ Thank you for helping improve the AsyncAPI MCP server. This document describes h
    npm run lint
    ```
 
-6. **Describe the PR** in complete sentences: what changed, why, and any caveats (e.g. only works on AsyncAPI 3.x).
+5. **Describe the PR** in complete sentences: what changed, why, and caveats (e.g. AsyncAPI 3.x-only behavior).
 
-## Code review expectations
+## Conventional Commits
 
-- PRs are reviewed for correctness, security (especially around file paths and user-supplied content), and maintainability.
-- Prefer extending shared helpers in `src/api/helpers.ts` and existing API wrappers under `src/api/` rather than duplicating logic in each tool.
+We follow **[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)** for **PR titles** (and preferably commit messages). Titles should be **clear**, **descriptive**, and in the **[imperative mood](https://chris.beams.io/posts/git-commit/#imperative)**.
 
-## Development environment
+Prefix cheat sheet:
 
-Setup, scripts, and debugging tips: **[DEVELOPMENT.md](./DEVELOPMENT.md)**.
+| Prefix | Meaning |
+|--------|---------|
+| `fix:` | Bug fix |
+| `feat:` | New behavior or capability |
+| `docs:` | Documentation only |
+| `chore:` | Maintenance that does not change runtime behavior |
+| `test:` | Tests only |
+| `refactor:` | Internal refactor without intended behavior change |
 
-## Conduct
+Examples:
 
-Be respectful and constructive. Assume good faith; focus feedback on the code and the user problem being solved.
+- `fix: resolve spectral ruleset path on Windows`
+- `feat: add tool to list AsyncAPI templates`
+- `docs: clarify MCP Inspector usage in CONTRIBUTING`
+
+## Development Environment
+
+Setup, scripts, and debugging: **[DEVELOPMENT.md](./DEVELOPMENT.md)**.
+
+## License
+
+By contributing, you agree your contributions are licensed under the same terms as this project — **[Apache License 2.0](./LICENSE)**.
