@@ -4,19 +4,19 @@ How to build, test, and extend this MCP server locally.
 
 ## Prerequisites
 
-- **Node.js** 24.11+ (`engines.node` in `package.json`)
+- **Node.js** 22+ (runtime) / 24.11+ recommended for development
 - **npm** (lockfile is `package-lock.json`)
 
 ## Setup
 
 ```bash
-git clone <repository-url> asyncapi-mcp-server
+git clone https://github.com/Adi-204/asyncapi-mcp-server.git
 cd asyncapi-mcp-server
 npm install
 npm run build
 ```
 
-The entrypoint is `dist/index.js`. The published CLI binary name is `asyncapi-mcp-server` (see `package.json` `bin`).
+The entrypoint is `dist/index.js` — a single self-contained bundle with all dependencies inlined (via esbuild). The published CLI binary name is `asyncapi-mcp-server` (see `package.json` `bin`).
 
 ## Project layout
 
@@ -27,13 +27,17 @@ The entrypoint is `dist/index.js`. The published CLI binary name is `asyncapi-mc
 | `src/tools/` | One folder per tool — `params.ts` (Zod) + `index.ts` (`register`, `execute`) |
 | `src/api/` | Wrappers around AsyncAPI and related libraries (parser, spectral, converter, generator, modelina) |
 | `src/api/helpers.ts` | Shared resolution of tool `source` input (inline YAML/JSON vs file path) |
+| `esbuild.config.mjs` | esbuild bundler config — produces a single-file `dist/index.js` |
 | `tests/` | Vitest tests; `tests/helpers.ts` for MCP client test harness |
 
 ## npm scripts
 
 | Script | Purpose |
 |--------|---------|
-| `npm run build` | `tsc` compile + `chmod +x` on `dist/*.js` (Unix) |
+| `npm run build` | `tsc` → esbuild bundle → single `dist/index.js` |
+| `npm run build:tsc` | TypeScript compile only (for type-checking) |
+| `npm run build:bundle` | esbuild bundle step (requires `build:tsc` first) |
+| `npm run clean` | Remove `dist/` |
 | `npm run watch` | TypeScript watch mode |
 | `npm start` | Run compiled server (`node dist/index.js`) |
 | `npm test` | `vitest run` |
