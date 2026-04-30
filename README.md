@@ -1,116 +1,82 @@
 # AsyncAPI MCP Server
 
-An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that brings **AsyncAPI** into AI-assisted workflows. It wraps the official AsyncAPI JavaScript tooling—parser, Spectral linting, converter, Modelina, and the Generator—so any MCP-capable client (Cursor, Claude Desktop, VS Code, and others) can **parse**, **validate**, **lint**, **convert**, **generate models**, and **run template-based generation** on AsyncAPI documents without shelling out to separate CLIs.
-
-The server communicates over **stdio** (subprocess transport), which matches how most IDEs and desktop agents run local MCP servers: no open port, no API keys required for core features.
-
----
+An [MCP](https://modelcontextprotocol.io/) server for **AsyncAPI**: parse, validate, lint (Spectral), convert versions, generate models (Modelina), and run the AsyncAPI Generator from any MCP client (Cursor, Claude Desktop, VS Code, and others). Uses **stdio** by default—no port or API key for core features.
 
 ## Tools
 
-Each tool takes the AsyncAPI **spec** as **`source`**: either inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file.
+All tools take the spec as **`source`**: inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file.
 
 ### `parse_document`
 
-Parse an AsyncAPI document and return a structured summary (servers, channels, operations, messages, metadata).
+Parse the document and return a structured summary (servers, channels, operations, messages, metadata).
 
-**Parameters:**
-
-- `source` (string, required): Raw YAML/JSON content or absolute file path to the spec.
+**Parameters:** `source` (string, required).
 
 ### `validate_document`
 
-Validate the document for structural correctness using the AsyncAPI parser and report issues (with severity/message/path and optional codes).
+Validate structure with the AsyncAPI parser; returns issues (severity, message, path, optional codes).
 
-**Parameters:**
-
-- `source` (string, required): Raw YAML/JSON content or absolute file path.
+**Parameters:** `source` (string, required).
 
 ### `lint_spec`
 
-Lint an AsyncAPI document with Spectral, using the built-in AsyncAPI rulesets (e.g. `spectral:asyncapi`) unless you supply a custom ruleset.
+Lint with Spectral using built-in AsyncAPI rulesets unless you pass a custom ruleset.
 
-**Parameters:**
-
-- `source` (string, required): Raw YAML/JSON content or absolute file path.
-- `ruleset` (string, optional): Path to a Spectral ruleset file (may extend `spectral:asyncapi`).
+**Parameters:** `source` (string, required); `ruleset` (string, optional)—path to a Spectral ruleset (may extend `spectral:asyncapi`).
 
 ### `convert_spec`
 
-Convert an AsyncAPI document toward a **target version** (e.g. 2.x → 3.x). Downgrades are not supported.
+Convert toward a target version (e.g. 2.x → 3.x). Downgrades are not supported.
 
-**Parameters:**
-
-- `source` (string, required): Raw YAML/JSON content or absolute file path.
-- `targetVersion` (string, required): Target version string (e.g. `"3.0.0"`, `"2.6.0"`).
-- `outputFormat` (enum, optional): `preserve` | `yaml` | `json` — control output serialization (`preserve` matches input style).
-- `options` (object, optional): Passthrough for `@asyncapi/converter` (e.g. `v2tov3`, `openAPIToAsyncAPI`).
+**Parameters:** `source` (string, required); `targetVersion` (string, required, e.g. `"3.0.0"`); `outputFormat` (optional): `preserve` | `yaml` | `json`; `options` (object, optional)—passthrough for `@asyncapi/converter`.
 
 ### `generate_models`
 
-Generate typed payload models from message schemas via **[@asyncapi/modelina](https://github.com/asyncapi/modelina)**.
+Generate typed payload models via [@asyncapi/modelina](https://github.com/asyncapi/modelina).
 
-**Parameters:**
-
-- `source` (string, required): Raw YAML/JSON content or absolute file path.
-- `language` (enum, required): One of: `java`, `typescript`, `csharp`, `go`, `javascript`, `dart`, `rust`, `python`, `kotlin`, `cpp`, `php`, `scala`.
-- `options` (object, optional): Modelina-oriented options — `indentation` (`spaces` | `tabs` + `size`), `processorOptions`, `generator` (language-specific; see Modelina docs).
+**Parameters:** `source` (string, required); `language` (enum, required): `java`, `typescript`, `csharp`, `go`, `javascript`, `dart`, `rust`, `python`, `kotlin`, `cpp`, `php`, `scala`; `options` (object, optional)—Modelina options (`indentation`, `processorOptions`, etc.).
 
 ### `generate`
 
-Generate code or documentation from a template using **[@asyncapi/generator](https://github.com/asyncapi/generator)**. Output is written under `targetDir`.
+Generate from a template with [@asyncapi/generator](https://github.com/asyncapi/generator). Output goes under **`targetDir`**.
 
-**Parameters:**
+**Parameters:** `source` (string, required); `template` (string, required)—built-in template id or npm package (e.g. `@asyncapi/html-template`); `targetDir` (string, required, **absolute** path; created if missing); `templateParams` (object, optional).
 
-- `source` (string, required): Raw YAML/JSON content or absolute file path.
-- `template` (string, required): Baked-in template id (if your environment has one) or a full npm template package (e.g. `@asyncapi/html-template`).
-- `targetDir` (string, required): **Absolute** directory path for generated files (created if missing).
-- `templateParams` (object, optional): String key-value map of template-specific parameters.
+## Prerequisites
 
----
-
-## Requirements
-
-- **Node.js** 24.11 or newer (see `package.json` `engines`).
-
-No external API key is required. Runtime dependencies are installed with the package as normal npm modules (this is not a single-file bundle).
-
----
+- **Node.js** 24.11+ (see `package.json` → `engines`).
 
 ## Installation
 
-### From npm (when published)
+**Published package**
 
 ```bash
 npm install -g asyncapi-mcp-server
 ```
 
-Or run on demand:
+On demand:
 
 ```bash
 npx -y asyncapi-mcp-server
 ```
 
-The first `npx` run can take a minute while npm installs transitive dependencies. If your MCP client times out, install once globally (`npm install -g asyncapi-mcp-server`) and configure the client to run the `asyncapi-mcp-server` binary instead of `npx`.
+If `npx` cold-start times out your client, install globally once and point the client at the `asyncapi-mcp-server` binary.
 
-### Local development build
+**From source**
 
 ```bash
-git clone <your-repo-url> asyncapi-mcp-server
+git clone https://github.com/Adi-204/asyncapi-mcp-server.git
 cd asyncapi-mcp-server
-npm install
-npm run build
+npm install && npm run build
 ```
 
-Point your MCP client at `node /absolute/path/to/asyncapi-mcp-server/dist/index.js` (see [DEVELOPMENT.md](./DEVELOPMENT.md)).
-
----
+Use `node /absolute/path/to/asyncapi-mcp-server/dist/index.js` in MCP config.
 
 ## Usage
 
 ### Claude Desktop
 
-Add to `claude_desktop_config.json` (paths depend on your OS):
+Add to `claude_desktop_config.json`:
 
 ```json
 {
@@ -123,15 +89,15 @@ Add to `claude_desktop_config.json` (paths depend on your OS):
 }
 ```
 
-For a **local checkout**, use `node` with the absolute path to `dist/index.js` instead of `npx`.
+For a local build, replace with `"command": "node"` and `"args": ["/absolute/path/to/asyncapi-mcp-server/dist/index.js"]`.
 
 ### Cursor
 
-In **Cursor Settings → MCP**, add a server with command `npx`, arguments `-y`, `asyncapi-mcp-server`, or the same `node …/dist/index.js` pattern for local development.
+**Settings → MCP:** command `npx`, args `-y`, `asyncapi-mcp-server` (or `node` + path to `dist/index.js` for local dev).
 
-### VS Code (MCP)
+### VS Code
 
-Add to User Settings JSON or `.vscode/mcp.json`, following the same pattern as other stdio servers:
+In User Settings JSON or `.vscode/mcp.json`:
 
 ```json
 {
@@ -144,10 +110,6 @@ Add to User Settings JSON or `.vscode/mcp.json`, following the same pattern as o
 }
 ```
 
-After the client loads the server, tools appear automatically; you can ask the model to validate a spec, lint it, convert versions, or generate models/code from your repo’s AsyncAPI files.
-
----
-
 ## Build
 
 ```bash
@@ -155,17 +117,12 @@ npm install
 npm run build
 ```
 
-The compiled entrypoint is `dist/index.js` (ESM, executable bit set on Unix via `shx chmod`).
-
----
+Entrypoint: `dist/index.js` (ESM).
 
 ## Development
 
-For clone/setup, testing, MCP Inspector, and how the repo is laid out, see **[DEVELOPMENT.md](./DEVELOPMENT.md)**.  
-For contribution guidelines, see **[CONTRIBUTING.md](./CONTRIBUTING.md)**.
-
----
+Inspector: `npm run inspect`. Clone setup, tests, layout: [DEVELOPMENT.md](./DEVELOPMENT.md). Contributions: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## License
 
-Apache License 2.0 — see `package.json` and the `LICENSE` file in this repository (if present).
+Apache-2.0 — see `LICENSE` and `package.json`.

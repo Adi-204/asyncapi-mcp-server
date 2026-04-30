@@ -41,6 +41,8 @@ The entrypoint is `dist/index.js`. The published CLI binary name is `asyncapi-mc
 | `npm run lint` | ESLint on `src/` |
 | `npm run lint:fix` | ESLint with `--fix` |
 | `npm run inspect` | Launch **MCP Inspector** against the built server |
+| `npm run bump:version` | Bump `package.json` version (used by release CI) |
+| `npm run generate:assets` | Build step for release asset generation |
 
 ## Testing
 
@@ -72,6 +74,85 @@ The server uses **stdio** by default; configure the Inspector for stdio when pro
 5. Add `tests/tools/<tool-name>.test.ts`.
 
 Avoid logging to **stdout** from the server process—the MCP wire protocol uses stdout. Use **stderr** for diagnostics only (see `src/index.ts`).
+
+## Release process
+
+This project uses [semantic-release](https://github.com/semantic-release/semantic-release) to automate versioning, npm publishing, and GitHub Release creation. The entire flow is driven by **Conventional Commits** — no manual version bumps or publish commands are needed for normal releases.
+
+### How it works (end-to-end)
+
+```
+PR merged to main
+       │
+       ▼
+ ┌─────────────────────────────────────────┐
+ │ Release workflow (.github/workflows/    │
+ │ release.yml) triggers if the squash     │
+ │ commit starts with fix: or feat:        │
+ └─────────────────────────────────────────┘
+       │
+       ▼
+ Tests run on ubuntu / macOS / Windows
+       │
+       ▼
+ semantic-release analyzes commits since
+ the last release tag
+       │
+       ▼
+ Determines version bump (patch / minor / major)
+       │
+       ▼
+ Publishes to npm with provenance
+       │
+       ▼
+ Creates a GitHub Release with auto-generated
+ changelog from commit messages
+       │
+       ▼
+ Version-bump workflow opens a PR to update
+ package.json with the new version number
+```
+
+### Conventional Commits and version bumps
+
+The commit message (or squash-merge PR title) determines the release type:
+
+| Prefix | Example | Release |
+|--------|---------|---------|
+| `fix:` | `fix: resolve spectral ruleset path on Windows` | **Patch** (1.3.0 → 1.3.1) |
+| `feat:` | `feat: add tool to list AsyncAPI templates` | **Minor** (1.3.0 → 1.4.0) |
+| `feat!:` or `fix!:` | `feat!: drop Node 18 support` | **Major** (1.3.0 → 2.0.0) |
+| `BREAKING CHANGE:` in body | Any prefix with `BREAKING CHANGE:` in the commit body | **Major** |
+| `docs:`, `chore:`, `test:`, `refactor:`, `ci:` | `docs: update DEVELOPMENT.md` | **No release** |
+
+Commits that don't start with `fix:` or `feat:` (including breaking variants) **do not trigger the release workflow at all**.
+
+### Pre-release channels
+
+Push to the `beta` or `alpha` branches to create pre-release versions:
+
+- `beta` branch → e.g. `2.0.0-beta.1`
+- `alpha` branch → e.g. `2.0.0-alpha.1`
+
+These are published to npm under dist-tags (`npm install asyncapi-mcp-server@beta`). The `.releaserc` file configures which branches are release branches.
+
+### Configuration files
+
+| File | Purpose |
+|------|---------|
+| `.releaserc` | semantic-release branch and plugin configuration |
+| `.github/workflows/release.yml` | CI workflow: test matrix + semantic-release publish |
+| `.github/workflows/version-bump.yml` | Opens a PR to bump `package.json` version after a GitHub Release is published |
+
+
+### Verifying a release
+
+After CI publishes a new version:
+
+1. **npm registry** — `npm view asyncapi-mcp-server versions --json` should list the new version
+2. **GitHub Releases** — check the [Releases page](https://github.com/Adi-204/asyncapi-mcp-server/releases) for the auto-generated changelog
+3. **Smoke test** — `npx asyncapi-mcp-server` (or `npx asyncapi-mcp-server@<version>`) should start the MCP server on stdio
+4. **Version-bump PR** — a PR titled `chore(release): vX.Y.Z` should appear; merge it to keep `package.json` in sync
 
 ## Tech stack (summary)
 

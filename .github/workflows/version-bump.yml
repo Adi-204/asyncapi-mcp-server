@@ -1,0 +1,58 @@
+name: Version bump - post release
+
+on:
+  release:
+    types:
+      - published
+
+permissions: {}
+
+jobs:
+  version_bump:
+    name: Bump version in package.json
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0 https://github.com/actions/checkout/releases/tag/v6.0.0
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0 https://github.com/actions/setup-node/releases/tag/v6.0.0
+        with:
+          node-version: "24"
+          check-latest: true
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate assets
+        run: npm run generate:assets --if-present
+
+      - name: Bump version in package.json
+        env:
+          VERSION: ${{ github.event.release.tag_name }}
+        # semantic-release tags are v1.2.3; npm version expects 1.2.3
+        run: |
+          export VERSION="${VERSION#v}"
+          npm run bump:version
+
+      - name: Create Pull Request with version bump
+        uses: peter-evans/create-pull-request@98357b18bf14b5342f975ff684046ec3b2a07725 # v8 https://github.com/peter-evans/create-pull-request/releases/tag/v8.0.0
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+        with:
+          token: ${{ github.token }}
+          base: main
+          commit-message: "chore(release): ${{ env.RELEASE_TAG }}"
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          title: "chore(release): ${{ env.RELEASE_TAG }}"
+          body: "Version bump in package.json for release [${{ env.RELEASE_TAG }}](${{ env.RELEASE_URL }})"
+          branch: "version-bump/${{ env.RELEASE_TAG }}"

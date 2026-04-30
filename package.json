@@ -31,7 +31,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
-    "prepublishOnly": "npm run build && npm test && npm run lint"
+    "prepublishOnly": "npm run build && npm test && npm run lint",
+    "bump:version": "npm --no-git-tag-version --allow-same-version version $VERSION",
+    "generate:assets": "npm run build"
   },
   "keywords": [
     "asyncapi",
@@ -62,6 +64,7 @@
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
+    "conventional-changelog-conventionalcommits": "^9.1.0",
     "@types/node": "^25.6.0",
     "eslint": "^10.2.1",
     "shx": "^0.4.0",
