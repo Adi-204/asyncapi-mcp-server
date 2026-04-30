@@ -1,5 +1,5 @@
-import { createRequire } from "node:module";
-import type { Diagnostic, Parser } from "@asyncapi/parser";
+import type { Diagnostic } from "@asyncapi/parser";
+import { Parser as ParserClass } from "@asyncapi/parser";
 import {
   CplusplusGenerator,
   CSharpGenerator,
@@ -17,11 +17,6 @@ import {
 } from "@asyncapi/modelina";
 import type { OutputModel, ProcessorOptions } from "@asyncapi/modelina";
 import { resolveInput } from "../helpers.js";
-
-const require = createRequire(import.meta.url);
-const { Parser: ParserClass } = require("@asyncapi/parser") as {
-  Parser: new (options?: object) => Parser;
-};
 
 /** Values accepted by the MCP tool and research.md (cpp → CplusplusGenerator). */
 export const MODEL_LANGUAGE = [

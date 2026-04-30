@@ -1,9 +1,8 @@
-import { createRequire } from "node:module";
 import type {
   AsyncAPIDocumentInterface,
   Diagnostic,
-  Parser,
 } from "@asyncapi/parser";
+import { Parser as ParserClass } from "@asyncapi/parser";
 import { resolveInput } from "../helpers.js";
 import { toParsedDocument } from "./utils.js";
 import type {
@@ -11,12 +10,6 @@ import type {
   ValidationIssue,
   ValidationResult,
 } from "./types.js";
-
-const require = createRequire(import.meta.url);
-const { Parser: ParserClass } = require("@asyncapi/parser") as {
-  // Parser options type exists on the package but is not re-exported from the entrypoint.
-  Parser: new (options?: object) => Parser;
-};
 
 const SEVERITY_MAP: Record<number, ValidationIssue["severity"]> = {
   0: "error",
