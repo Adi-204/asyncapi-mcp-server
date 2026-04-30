@@ -1,16 +1,13 @@
-import { createRequire } from "node:module";
 import { readdir, stat } from "node:fs/promises";
 import { join, relative } from "node:path";
+// @ts-expect-error CJS package with no ESM type declarations
+import GeneratorClass from "@asyncapi/generator";
 import { resolveInput } from "../helpers.js";
 import type {
   GenerateOptions,
   GenerateResult,
   GeneratedFile,
 } from "./types.js";
-
-const require = createRequire(import.meta.url);
-const generatorPkg = require("@asyncapi/generator");
-const GeneratorClass = generatorPkg.default ?? generatorPkg;
 
 async function walkDir(dir: string, root: string): Promise<GeneratedFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
