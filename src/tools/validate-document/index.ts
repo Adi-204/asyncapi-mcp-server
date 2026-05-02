@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { validateDocument } from "../../api/parser/index.js";
 import { buildToolDescription } from "../_meta.js";
 
 export const name = "validate_document";
@@ -32,6 +31,7 @@ export const description = buildToolDescription({
 
 export const execute = async ({ source }: QueryParams) => {
   try {
+    const { validateDocument } = await import("../../api/parser/index.js");
     const result = await validateDocument(source);
     return {
       content: [

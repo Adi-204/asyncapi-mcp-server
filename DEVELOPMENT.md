@@ -4,7 +4,7 @@ How to build, test, and extend this MCP server locally.
 
 ## Prerequisites
 
-- **Node.js** 24.11+ (`engines.node` in `package.json`)
+- **Node.js** 22+ (`engines.node` in `package.json`)
 - **npm** (lockfile is `package-lock.json`)
 
 ## Setup

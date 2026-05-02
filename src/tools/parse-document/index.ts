@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { parseDocument } from "../../api/parser/index.js";
 import { buildToolDescription } from "../_meta.js";
 
 export const name = "parse_document";
@@ -30,6 +29,7 @@ export const description = buildToolDescription({
 
 export const execute = async ({ source }: QueryParams) => {
   try {
+    const { parseDocument } = await import("../../api/parser/index.js");
     const parsed = await parseDocument(source);
     return {
       content: [
