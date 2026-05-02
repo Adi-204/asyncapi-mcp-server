@@ -77,7 +77,11 @@ jobs:
       - name: Run semantic-release
         id: release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Prefer RELEASE_PAT so the GitHub Release event fires downstream workflows
+          # (e.g. version-bump.yml). GitHub suppresses workflow events triggered by the
+          # default GITHUB_TOKEN, so without a PAT/App token the bump PR won't open
+          # automatically. Falls back to GITHUB_TOKEN if RELEASE_PAT is not configured.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_AUTHOR_NAME: github-actions[bot]
