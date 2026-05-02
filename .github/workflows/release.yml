@@ -6,14 +6,17 @@ on:
       - main
       - beta
       - alpha
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   test-nodejs:
+    # Always run on manual dispatch; on push, only run when the head commit looks releasable
+    # (fix:/feat:, optionally with !). semantic-release itself will skip if there's nothing to release.
     if: >-
-      ${{ github.event.head_commit != null && (startsWith(github.event.head_commit.message, 'fix:') || startsWith(github.event.head_commit.message, 'fix!:') || startsWith(github.event.head_commit.message, 'feat:') || startsWith(github.event.head_commit.message, 'feat!:')) }}
+      ${{ github.event_name == 'workflow_dispatch' || (github.event.head_commit != null && (startsWith(github.event.head_commit.message, 'fix:') || startsWith(github.event.head_commit.message, 'fix!:') || startsWith(github.event.head_commit.message, 'feat:') || startsWith(github.event.head_commit.message, 'feat!:'))) }}
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
