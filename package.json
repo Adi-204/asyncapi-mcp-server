@@ -1,6 +1,6 @@
 {
   "name": "asyncapi-mcp-server",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "AsyncAPI MCP server — Model Context Protocol server for working with AsyncAPI: parse and validate documents, list templates, and generate code and docs (via @asyncapi/parser and @asyncapi/generator) for any MCP-compatible client",
   "bin": {
     "asyncapi-mcp-server": "dist/index.js"
