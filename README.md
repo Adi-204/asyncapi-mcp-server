@@ -112,12 +112,12 @@ In User Settings JSON or `.vscode/mcp.json`:
 
 ## Build
 
+Entrypoint: `dist/index.js` (ESM).
+
 ```bash
 npm install
 npm run build
 ```
-
-Entrypoint: `dist/index.js` (ESM).
 
 ## Development
 
