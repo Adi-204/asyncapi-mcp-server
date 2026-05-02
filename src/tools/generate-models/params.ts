@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MODEL_LANGUAGE } from "../../api/modelina/index.js";
+import { MODEL_LANGUAGE } from "../../api/modelina/languages.js";
 
 const indentationSchema = z
   .object({

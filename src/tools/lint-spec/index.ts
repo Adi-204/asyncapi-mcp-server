@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type QueryParams } from "./params.js";
-import { lintSpec } from "../../api/spectral/index.js";
 import { buildToolDescription } from "../_meta.js";
 
 export const name = "lint_spec";
@@ -31,6 +30,7 @@ export const description = buildToolDescription({
 
 export const execute = async ({ source, ruleset }: QueryParams) => {
   try {
+    const { lintSpec } = await import("../../api/spectral/index.js");
     const result = await lintSpec(source, { ruleset });
     return {
       content: [

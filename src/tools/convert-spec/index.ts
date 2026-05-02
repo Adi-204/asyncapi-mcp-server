@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { ConvertOptions } from "@asyncapi/converter";
-import { convertAsyncApiSpec } from "../../api/converter/index.js";
 import params, { type QueryParams } from "./params.js";
 import { buildToolDescription } from "../_meta.js";
 
@@ -46,6 +45,7 @@ export const execute = async ({
   options,
 }: QueryParams) => {
   try {
+    const { convertAsyncApiSpec } = await import("../../api/converter/index.js");
     const opts = options as ConvertOptions | undefined;
     const result = await convertAsyncApiSpec({
       source,
