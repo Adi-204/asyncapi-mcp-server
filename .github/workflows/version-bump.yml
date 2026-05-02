@@ -11,9 +11,6 @@ jobs:
   version_bump:
     name: Bump version in package.json
     runs-on: ubuntu-latest
-    # Skip backfilled releases v1.1.0 / v1.2.0 / v1.3.0 (their package.json was already at the
-    # right version when published manually). Remove this guard once those releases are created.
-    if: ${{ github.event.release.tag_name != 'v1.1.0' && github.event.release.tag_name != 'v1.2.0' && github.event.release.tag_name != 'v1.3.0' }}
     permissions:
       contents: write
       pull-requests: write
