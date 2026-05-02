@@ -44,7 +44,7 @@ Generate from a template with [@asyncapi/generator](https://github.com/asyncapi/
 
 ## Prerequisites
 
-- **Node.js** 24.11+ (see `package.json` → `engines`).
+- **Node.js** 22+ (see `package.json` → `engines`).
 
 ## Installation
 
