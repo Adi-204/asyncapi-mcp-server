@@ -17,24 +17,12 @@ import {
 } from "@asyncapi/modelina";
 import type { OutputModel, ProcessorOptions } from "@asyncapi/modelina";
 import { resolveInput } from "../helpers.js";
+import type { ModelLanguage } from "./languages.js";
 
-/** Values accepted by the MCP tool and research.md (cpp → CplusplusGenerator). */
-export const MODEL_LANGUAGE = [
-  "java",
-  "typescript",
-  "csharp",
-  "go",
-  "javascript",
-  "dart",
-  "rust",
-  "python",
-  "kotlin",
-  "cpp",
-  "php",
-  "scala",
-] as const;
-
-export type ModelLanguage = (typeof MODEL_LANGUAGE)[number];
+/** Re-exported from the leaf `./languages.js` module so callers that only need the
+ * language list can import without paying the full Modelina runtime cost. */
+export { MODEL_LANGUAGE } from "./languages.js";
+export type { ModelLanguage } from "./languages.js";
 
 const EXTENSION_BY_LANG: Record<ModelLanguage, string> = {
   java: "java",
