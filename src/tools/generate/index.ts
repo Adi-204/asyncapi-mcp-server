@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type GenerateParams } from "./params.js";
-import { generateCode } from "../../api/generator/index.js";
 import { buildToolDescription } from "../_meta.js";
 
 export const name = "generate";
@@ -43,6 +42,7 @@ export const execute = async ({
   templateParams,
 }: GenerateParams) => {
   try {
+    const { generateCode } = await import("../../api/generator/index.js");
     const result = await generateCode({
       source,
       template,

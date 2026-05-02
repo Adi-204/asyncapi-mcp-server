@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type GenerateModelsParams } from "./params.js";
-import { generateModelsFromSource } from "../../api/modelina/index.js";
 import type { ModelinaGenerationOptionsInput } from "../../api/modelina/index.js";
 import { buildToolDescription } from "../_meta.js";
 
@@ -54,6 +53,7 @@ export const execute = async ({
   options,
 }: GenerateModelsParams) => {
   try {
+    const { generateModelsFromSource } = await import("../../api/modelina/index.js");
     const result = await generateModelsFromSource(source, language, toModelinaOptions(options));
     return {
       content: [
