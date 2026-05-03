@@ -51,8 +51,9 @@ jobs:
           token: ${{ secrets.RELEASE_PAT || github.token }}
           base: main
           commit-message: "chore(release): ${{ env.RELEASE_TAG }}"
-          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
-          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          # Use the release publisher’s GitHub identity (matches RELEASE_PAT / API actor); omitting author defaults to github-actions[bot].
+          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          committer: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           title: "chore(release): ${{ env.RELEASE_TAG }}"
           body: "Version bump in package.json for release [${{ env.RELEASE_TAG }}](${{ env.RELEASE_URL }})"
           branch: "version-bump/${{ env.RELEASE_TAG }}"
