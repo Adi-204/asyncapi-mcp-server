@@ -32,3 +32,16 @@ export async function resolveInput(input: string): Promise<string> {
     throw err;
   }
 }
+
+/**
+ * Options for `@asyncapi/parser` when resolving relative `$ref` paths.
+ * Spectral uses `source` as the document base URI; without it, `./commons/foo.yml`
+ * resolves against `process.cwd()` instead of the entry spec's directory.
+ *
+ * Returns `{}` for inline YAML/JSON strings (no stable base path).
+ */
+export function parseOptionsForInput(input: string): { source?: string } {
+  const trimmed = input.trim();
+  if (!looksLikeFilePath(trimmed)) return {};
+  return { source: resolve(trimmed) };
+}

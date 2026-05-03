@@ -16,7 +16,7 @@ import {
   TypeScriptGenerator,
 } from "@asyncapi/modelina";
 import type { OutputModel, ProcessorOptions } from "@asyncapi/modelina";
-import { resolveInput } from "../helpers.js";
+import { parseOptionsForInput, resolveInput } from "../helpers.js";
 import type { ModelLanguage } from "./languages.js";
 
 /** Re-exported from the leaf `./languages.js` module so callers that only need the
@@ -166,7 +166,10 @@ export async function generateModelsFromSource(
 ): Promise<GenerateModelsResult> {
   const content = await resolveInput(source);
   const parser = new ParserClass();
-  const { document, diagnostics } = await parser.parse(content);
+  const { document, diagnostics } = await parser.parse(
+    content,
+    parseOptionsForInput(source)
+  );
 
   const errors = diagnostics.filter(
     (d: { severity: number }) => d.severity === 0

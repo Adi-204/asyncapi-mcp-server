@@ -3,7 +3,7 @@ import type {
   Diagnostic,
 } from "@asyncapi/parser";
 import { Parser as ParserClass } from "@asyncapi/parser";
-import { resolveInput } from "../helpers.js";
+import { parseOptionsForInput, resolveInput } from "../helpers.js";
 import { toParsedDocument } from "./utils.js";
 import type {
   ParsedDocument,
@@ -48,7 +48,10 @@ export type {
 export async function parseDocument(input: string): Promise<ParsedDocument> {
   const content = await resolveInput(input);
   const parser = new ParserClass();
-  const { document, diagnostics } = await parser.parse(content);
+  const { document, diagnostics } = await parser.parse(
+    content,
+    parseOptionsForInput(input)
+  );
 
   const errors = diagnostics.filter(
     (d: { severity: number }) => d.severity === 0
@@ -71,7 +74,10 @@ export async function validateDocument(
 ): Promise<ValidationResult> {
   const content = await resolveInput(input);
   const parser = new ParserClass();
-  const { document, diagnostics } = await parser.parse(content);
+  const { document, diagnostics } = await parser.parse(
+    content,
+    parseOptionsForInput(input)
+  );
 
   const issues = toValidationIssues(diagnostics);
   const hasErrors = issues.some((i) => i.severity === "error");
