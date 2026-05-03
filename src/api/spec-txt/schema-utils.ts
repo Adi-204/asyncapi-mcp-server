@@ -4,9 +4,6 @@ import type {
   SchemaInterface,
 } from "@asyncapi/parser";
 
-const MAX_PROPS_IN_ONE_LINER = 10;
-const MAX_JSON_VALUE_LEN = 100;
-
 /**
  * Extracts a compact type label for a single schema node.
  * Handles primitives, arrays (`type[]`), unions (`a | b`), nested objects
@@ -48,29 +45,20 @@ function unionLabel(schema: SchemaInterface): string | undefined {
 
 /**
  * Renders a schema's top-level properties as a single-line TypeScript-ish
- * shape: `{ userId: integer, email: string, tags: string[] }`. Truncates at
- * `maxProps` properties with a `... +N more` suffix. Non-object schemas
- * render as their type label.
+ * shape: `{ userId: integer, email: string, tags: string[] }`. Non-object
+ * schemas render as their type label.
  */
-export function schemaToOneLiner(
-  schema: SchemaInterface,
-  maxProps: number = MAX_PROPS_IN_ONE_LINER
-): string {
+export function schemaToOneLiner(schema: SchemaInterface): string {
   const props = schema.properties();
   if (!props || Object.keys(props).length === 0) {
     return schemaTypeLabel(schema);
   }
 
-  const entries = Object.entries(props);
-  const shown = entries.slice(0, maxProps);
-  const rest = entries.length - shown.length;
-
-  const rendered = shown
+  const rendered = Object.entries(props)
     .map(([name, sub]) => `${name}: ${schemaTypeLabel(sub)}`)
     .join(", ");
 
-  const suffix = rest > 0 ? `, ... +${rest} more` : "";
-  return `{ ${rendered}${suffix} }`;
+  return `{ ${rendered} }`;
 }
 
 /**
@@ -185,9 +173,5 @@ function compactValue(val: unknown): string {
   if (val === null || val === undefined) return "null";
   if (typeof val === "string") return val;
   if (typeof val === "number" || typeof val === "boolean") return String(val);
-  const json = JSON.stringify(val);
-  if (json.length > MAX_JSON_VALUE_LEN) {
-    return json.slice(0, MAX_JSON_VALUE_LEN) + "...";
-  }
-  return json;
+  return JSON.stringify(val);
 }
