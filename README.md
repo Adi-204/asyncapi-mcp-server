@@ -1,10 +1,21 @@
 # AsyncAPI MCP Server
 
-An [MCP](https://modelcontextprotocol.io/) server for **AsyncAPI**: parse, validate, lint (Spectral), convert versions, generate models (Modelina), and run the AsyncAPI Generator from any MCP client (Cursor, Claude Desktop, VS Code, and others). Uses **stdio** by default—no port or API key for core features.
+An [MCP](https://modelcontextprotocol.io/) server for **AsyncAPI**: build LLM-optimized `spec.txt` summaries, parse, validate, lint (Spectral), convert versions, generate models (Modelina), and run the AsyncAPI Generator from any MCP client (Cursor, Claude Desktop, VS Code, and others). Uses **stdio** by default—no port or API key for core features.
 
 ## Tools
 
 All tools take the spec as **`source`**: inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file.
+
+### `build_spec_txt`
+
+Build an LLM-optimized markdown summary (`spec.txt`) of an AsyncAPI document. Two modes following the [llms.txt](https://llmstxt.org) / llms-full.txt convention:
+
+- **Normal** (default): compact TOC with [JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901) links per item — `[channelId](#/channels/channelId) - address - description`. Minimal tokens; the LLM gets the full API topology and can call `full: true` if it needs detail.
+- **Full** (`full: true`): everything inline — payload one-liners, expanded property lists, binding configs, extension values, and example payloads. Self-contained reference.
+
+Sections: **Spec Info**, **Servers**, **Channels**, **Operations** (`### Sends` / `### Receives`), **Messages**, **Schemas**, **Security Schemes**, **Bindings**, **Extensions**, **Optional** (message examples). Empty sections are omitted. AsyncAPI 2.x `publish`/`subscribe` operations are normalized to the 3.x `Sends`/`Receives` headings automatically.
+
+**Parameters:** `source` (string, required); `full` (boolean, optional, default `false`).
 
 ### `parse_document`
 
