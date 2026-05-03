@@ -48,7 +48,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           RELEASE_URL: ${{ github.event.release.html_url }}
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.RELEASE_PAT || github.token }}
           base: main
           commit-message: "chore(release): ${{ env.RELEASE_TAG }}"
           committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
