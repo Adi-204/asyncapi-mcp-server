@@ -53,7 +53,7 @@ npm run build
 npm test
 ```
 
-When adding a tool, mirror the pattern in `tests/tools/parse-document.test.ts` or `tests/tools/generate-models.test.ts`.
+When adding a tool, mirror the pattern in `tests/tools/get-asyncapi-info.test.ts` (discoverability + behavior) or `tests/tools/generate-models.test.ts`.
 
 ## Debugging with MCP Inspector
 

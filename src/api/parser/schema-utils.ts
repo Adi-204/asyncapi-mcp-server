@@ -1,8 +1,5 @@
-import type {
-  BindingsInterface,
-  ExtensionsInterface,
-  SchemaInterface,
-} from "@asyncapi/parser";
+import type { BindingsInterface, SchemaInterface } from "@asyncapi/parser";
+import type { BindingCompactEntry } from "./types.js";
 
 /**
  * Extracts a compact type label for a single schema node.
@@ -62,36 +59,13 @@ export function schemaToOneLiner(schema: SchemaInterface): string {
 }
 
 /**
- * Renders a schema's top-level properties as indented markdown bullet lines
- * suitable for the Schemas section. One indent level only — nested objects
- * render as `propName (object)` without recursive expansion.
- *
- * Returns an empty array if the schema has no properties (non-object schemas
- * are described by the caller via the section heading's type label).
- */
-export function schemaToPropertyList(schema: SchemaInterface): string[] {
-  const props = schema.properties();
-  if (!props) return [];
-
-  const required = new Set(schema.required() ?? []);
-
-  return Object.entries(props).map(([name, sub]) => {
-    const type = schemaTypeLabel(sub);
-    const requiredness = required.has(name) ? "required" : "optional";
-    const description = sub.description()?.trim();
-    const descSuffix = description ? ` — ${description}` : "";
-    return `  - \`${name}\` (${type}, ${requiredness})${descSuffix}`;
-  });
-}
-
-/**
  * Flattens a Bindings collection into readable descriptions per protocol.
  * For schema-typed values (objects with `type` and `properties`), renders
  * them as meaningful descriptions rather than raw JSON.
  */
 export function bindingsToCompact(
   bindings: BindingsInterface
-): Array<{ protocol: string; summary: string; description: string }> {
+): BindingCompactEntry[] {
   if (bindings.isEmpty()) return [];
 
   return bindings.all().map((b) => {
@@ -148,25 +122,6 @@ function isSchemaLike(val: unknown): boolean {
   if (!val || typeof val !== "object") return false;
   const obj = val as Record<string, unknown>;
   return "type" in obj || "properties" in obj || "$ref" in obj;
-}
-
-/**
- * Renders extension entries from an Extensions collection as markdown lines.
- * Each line: `- {scopeLabel} / {x-key}: {compactValue}`
- */
-export function extensionsToLines(
-  extensions: ExtensionsInterface,
-  scopeLabel: string
-): string[] {
-  if (extensions.isEmpty()) return [];
-
-  return extensions
-    .all()
-    .filter((ext) => !ext.id().startsWith("x-parser-"))
-    .map((ext) => {
-      const val = compactValue(ext.value());
-      return `- **${scopeLabel} / \`${ext.id()}\`**: ${val}`;
-    });
 }
 
 function compactValue(val: unknown): string {

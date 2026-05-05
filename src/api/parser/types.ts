@@ -1,44 +1,6 @@
-export interface ParsedServer {
-  id: string;
-  host: string;
-  pathname?: string;
-  protocol: string;
-  description?: string;
-}
+import type { ChannelInterface, TagsInterface } from "@asyncapi/parser";
 
-export interface ParsedChannel {
-  id: string;
-  address: string | null;
-  description?: string;
-  messages: string[];
-}
-
-export interface ParsedOperation {
-  id: string;
-  action: string;
-  channel: string;
-  description?: string;
-  messages: string[];
-}
-
-export interface ParsedMessage {
-  id: string;
-  description?: string;
-  contentType?: string;
-  hasPayload: boolean;
-}
-
-export interface ParsedDocument {
-  asyncapi: string;
-  title: string;
-  version: string;
-  description?: string;
-  defaultContentType?: string;
-  servers: ParsedServer[];
-  channels: ParsedChannel[];
-  operations: ParsedOperation[];
-  messages: ParsedMessage[];
-}
+// --- Validation ---
 
 export type ValidationIssueSeverity = "error" | "warning" | "info" | "hint";
 
@@ -49,6 +11,12 @@ export interface ValidationIssue {
   severity: ValidationIssueSeverity;
 }
 
+export interface DocumentIdentitySummary {
+  asyncapi: string;
+  title: string;
+  version: string;
+}
+
 /**
  * Outcome of validating an AsyncAPI document. When `valid` is true, `summary`
  * contains basic document identity; `issues` may still list non-error severities.
@@ -56,9 +24,52 @@ export interface ValidationIssue {
 export interface ValidationResult {
   valid: boolean;
   issues: ValidationIssue[];
-  summary?: {
-    asyncapi: string;
-    title: string;
-    version: string;
-  };
+  summary?: DocumentIdentitySummary;
 }
+
+// --- Schema serialization ---
+
+export type SerializeSchemaOptions = {
+  maxDepth: number;
+};
+
+// --- Domain extractors ---
+
+/** Parser mix-in shape (not always reflected on every TypeScript interface). */
+export type WithTags = { tags(): TagsInterface };
+
+/** Runtime channels expose `tags()` (CoreModel) though `ChannelInterface` types omit it. */
+export type ChannelWithTags = ChannelInterface & WithTags;
+
+/**
+ * Optional CoreModel title/summary/description accessors when the runtime model
+ * implements them (v3 shapes); fields omitted when not present.
+ */
+export type MaybeCoreText = {
+  hasTitle?: () => boolean;
+  title?: () => string | undefined;
+  hasSummary?: () => boolean;
+  summary?: () => string | undefined;
+  hasDescription?: () => boolean;
+  description?: () => string | undefined;
+};
+
+export type CoreTextFields = {
+  title?: string;
+  summary?: string;
+  description?: string;
+};
+
+export type ListMessagesOptions = {
+  includeHeadersSummary: boolean;
+  payloadDetail: "summary" | "full";
+  payloadMaxDepth: number;
+};
+
+// --- Bindings (schema-utils) ---
+
+export type BindingCompactEntry = {
+  protocol: string;
+  summary: string;
+  description: string;
+};
