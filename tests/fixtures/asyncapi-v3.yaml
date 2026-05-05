@@ -31,6 +31,12 @@ operations:
       - $ref: '#/channels/chat/messages/chatMessage'
 
 components:
+  schemas:
+    SimpleRecord:
+      type: object
+      properties:
+        key:
+          type: string
   messages:
     ChatMessage:
       contentType: application/json

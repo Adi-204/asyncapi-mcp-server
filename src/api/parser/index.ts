@@ -1,15 +1,11 @@
 import type {
   AsyncAPIDocumentInterface,
   Diagnostic,
+  SchemaInterface,
 } from "@asyncapi/parser";
 import { Parser as ParserClass } from "@asyncapi/parser";
 import { parseOptionsForInput, resolveInput } from "../helpers.js";
-import { toParsedDocument } from "./utils.js";
-import type {
-  ParsedDocument,
-  ValidationIssue,
-  ValidationResult,
-} from "./types.js";
+import type { ValidationIssue, ValidationResult } from "./types.js";
 
 const SEVERITY_MAP: Record<number, ValidationIssue["severity"]> = {
   0: "error",
@@ -32,26 +28,51 @@ function toValidationIssues(diagnostics: Diagnostic[]): ValidationIssue[] {
 }
 
 export type {
-  ParsedChannel,
-  ParsedDocument,
-  ParsedMessage,
-  ParsedOperation,
-  ParsedServer,
+  BindingCompactEntry,
+  ChannelWithTags,
+  CoreTextFields,
+  DocumentIdentitySummary,
+  ListMessagesOptions,
+  MaybeCoreText,
+  SerializeSchemaOptions,
   ValidationIssue,
+  ValidationIssueSeverity,
   ValidationResult,
+  WithTags,
 } from "./types.js";
 
-/**
- * Parse an AsyncAPI document (YAML/JSON string or file path) and return a
- * structured summary. Uses @asyncapi/parser.
- */
-export async function parseDocument(input: string): Promise<ParsedDocument> {
+export {
+  bindingsToCompact,
+  schemaToOneLiner,
+  schemaTypeLabel,
+} from "./schema-utils.js";
+
+export {
+  extractAsyncApiInfo,
+  extractChannels,
+  extractMessages,
+  extractOperations,
+  extractSchemaSummaries,
+  extractSecuritySchemes,
+  extractServers,
+} from "./extractors.js";
+
+export { serializeSchema } from "./serialize-schema.js";
+
+async function runParse(input: string) {
   const content = await resolveInput(input);
   const parser = new ParserClass();
-  const { document, diagnostics } = await parser.parse(
-    content,
-    parseOptionsForInput(input)
-  );
+  return parser.parse(content, parseOptionsForInput(input));
+}
+
+/**
+ * Parse and return the AsyncAPI document model, or throw with parser error
+ * messages if the document is invalid.
+ */
+export async function parseToDocument(
+  input: string
+): Promise<AsyncAPIDocumentInterface> {
+  const { document, diagnostics } = await runParse(input);
 
   const errors = diagnostics.filter(
     (d: { severity: number }) => d.severity === 0
@@ -61,7 +82,17 @@ export async function parseDocument(input: string): Promise<ParsedDocument> {
     throw new Error(`Invalid AsyncAPI document:\n${msgs.join("\n")}`);
   }
 
-  return toParsedDocument(document);
+  return document;
+}
+
+/**
+ * Resolve a component schema by id (e.g. the key under `components.schemas`).
+ */
+export function getSchemaById(
+  doc: AsyncAPIDocumentInterface,
+  id: string
+): SchemaInterface | undefined {
+  return doc.allSchemas().get(id);
 }
 
 /**
@@ -72,12 +103,7 @@ export async function parseDocument(input: string): Promise<ParsedDocument> {
 export async function validateDocument(
   input: string
 ): Promise<ValidationResult> {
-  const content = await resolveInput(input);
-  const parser = new ParserClass();
-  const { document, diagnostics } = await parser.parse(
-    content,
-    parseOptionsForInput(input)
-  );
+  const { document, diagnostics } = await runParse(input);
 
   const issues = toValidationIssues(diagnostics);
   const hasErrors = issues.some((i) => i.severity === "error");
