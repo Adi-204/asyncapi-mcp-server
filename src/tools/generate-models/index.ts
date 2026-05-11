@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import params, { type GenerateModelsParams } from "./params.js";
-import type { ModelinaGenerationOptionsInput } from "../../api/modelina/index.js";
+import type { ModelinaGenerationOptionsInput } from "../../api/modelina/types.js";
 import { buildToolDescription } from "../_meta.js";
 
 export const name = "generate_models";

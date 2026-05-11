@@ -3,20 +3,12 @@ import type {
   ChannelInterface,
   MessageInterface,
   OperationInterface,
-  SchemaInterface,
-  SecuritySchemeInterface,
   ServerInterface,
 } from "@asyncapi/parser";
-import {
-  bindingsToCompact,
-  schemaToOneLiner,
-  schemaTypeLabel,
-} from "./schema-utils.js";
-import { serializeSchema } from "./serialize-schema.js";
+import { bindingsToCompact, schemaToOneLiner } from "./schema-utils.js";
 import type {
   ChannelWithTags,
   CoreTextFields,
-  ListMessagesOptions,
   MaybeCoreText,
   WithTags,
 } from "./types.js";
@@ -46,7 +38,6 @@ function pickCoreText(entity: object): CoreTextFields {
 export function extractAsyncApiInfo(doc: AsyncAPIDocumentInterface) {
   const info = doc.info();
   const infoFields = { ...(info.json() as Record<string, unknown>) };
-  delete infoFields.tags;
 
   return {
     asyncapi: doc.version(),
@@ -127,25 +118,9 @@ export function extractOperations(doc: AsyncAPIDocumentInterface) {
   });
 }
 
-function payloadSummary(
-  schema: SchemaInterface | undefined,
-  opts: ListMessagesOptions
-): unknown {
-  if (!schema) return undefined;
-  if (opts.payloadDetail === "full") {
-    return serializeSchema(schema, { maxDepth: opts.payloadMaxDepth });
-  }
-  return schemaToOneLiner(schema);
-}
-
-function headersSummary(schema: SchemaInterface | undefined): string | undefined {
-  if (!schema) return undefined;
-  return schemaToOneLiner(schema);
-}
-
 export function extractMessages(
   doc: AsyncAPIDocumentInterface,
-  opts: ListMessagesOptions
+  includeHeadersSummary: boolean
 ) {
   return doc.allMessages().all().map((m: MessageInterface) => {
     const payload = m.hasPayload() ? m.payload() : undefined;
@@ -159,26 +134,11 @@ export function extractMessages(
       schemaFormat: m.hasSchemaFormat() ? m.schemaFormat() : undefined,
       hasPayload: m.hasPayload(),
       hasHeaders: m.hasHeaders(),
-      payloadSummary: payloadSummary(payload, opts),
+      payloadSummary: payload ? schemaToOneLiner(payload) : undefined,
     };
-    if (opts.includeHeadersSummary && headers) {
-      row.headersSummary = headersSummary(headers);
+    if (includeHeadersSummary && headers) {
+      row.headersSummary = schemaToOneLiner(headers);
     }
     return row;
   });
-}
-
-export function extractSchemaSummaries(doc: AsyncAPIDocumentInterface) {
-  return doc.allSchemas().all().map((s: SchemaInterface) => ({
-    id: s.id(),
-    summary: schemaTypeLabel(s),
-    shape: schemaToOneLiner(s),
-  }));
-}
-
-export function extractSecuritySchemes(doc: AsyncAPIDocumentInterface) {
-  return doc.securitySchemes().all().map((sch: SecuritySchemeInterface) => ({
-    id: sch.id(),
-    ...(sch.json() as Record<string, unknown>),
-  }));
 }

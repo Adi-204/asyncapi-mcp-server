@@ -2,24 +2,16 @@ import { convert } from "@asyncapi/converter";
 import type {
   AsyncAPIConvertVersion,
   AsyncAPIDocument,
-  ConvertOptions,
 } from "@asyncapi/converter";
 import { dump, load } from "js-yaml";
 import { resolveInput } from "../helpers.js";
-
-export type OutputFormat = "preserve" | "yaml" | "json";
-
-export type ConvertSpecRequest = {
-  source: string;
-  targetVersion: string;
-  options?: ConvertOptions;
-  outputFormat?: OutputFormat;
-};
-
-export type ConvertSpecResult = {
-  document: string;
-  inputFormat: "yaml" | "json";
-};
+import type {
+  ConvertSpecRequest,
+  ConvertSpecResult,
+  OutputFormat,
+  ParsedAsyncApiWireText,
+  WireFormat,
+} from "./types.js";
 
 function normalizeAsyncApiVersion(value: unknown): string {
   return String(value);
@@ -29,10 +21,7 @@ function normalizeAsyncApiVersion(value: unknown): string {
  * Mirrors {@link https://github.com/asyncapi/converter-js/blob/master/src/utils.ts @asyncapi/converter}'s
  * `serializeInput` behavior for string documents so format detection matches `convert()`.
  */
-export function parseAsyncApiWireText(raw: string): {
-  format: "yaml" | "json";
-  document: AsyncAPIDocument;
-} {
+export function parseAsyncApiWireText(raw: string): ParsedAsyncApiWireText {
   let triedConvertToYaml = false;
   try {
     const maybeJSON: unknown = JSON.parse(raw);
@@ -64,8 +53,8 @@ export function parseAsyncApiWireText(raw: string): {
 
 function effectiveOutputFormat(
   outputFormat: OutputFormat | undefined,
-  inputFormat: "yaml" | "json"
-): "yaml" | "json" {
+  inputFormat: WireFormat
+): WireFormat {
   if (!outputFormat || outputFormat === "preserve") {
     return inputFormat;
   }
@@ -75,7 +64,7 @@ function effectiveOutputFormat(
 /** `convert()` returns a YAML string for YAML input or a plain object for JSON input. */
 function normalizeConvertOutput(
   result: string | AsyncAPIDocument,
-  eff: "yaml" | "json"
+  eff: WireFormat
 ): string {
   const obj =
     typeof result === "string"
@@ -86,10 +75,7 @@ function normalizeConvertOutput(
     : JSON.stringify(obj, null, 2);
 }
 
-function serializeDocument(
-  document: AsyncAPIDocument,
-  eff: "yaml" | "json"
-): string {
+function serializeDocument(document: AsyncAPIDocument, eff: WireFormat): string {
   return eff === "yaml"
     ? dump(document, { skipInvalid: true })
     : JSON.stringify(document, null, 2);

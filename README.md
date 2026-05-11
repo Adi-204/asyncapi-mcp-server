@@ -1,59 +1,25 @@
 # AsyncAPI MCP Server
 
-An [MCP](https://modelcontextprotocol.io/) server for **AsyncAPI**: inspect specs (domain tools), validate, lint (Spectral), convert versions, generate models (Modelina), and run the AsyncAPI Generator from any MCP client (Cursor, Claude Desktop, VS Code, and others). Uses **stdio** by default—no port or API key for core features.
+An [MCP](https://modelcontextprotocol.io/) server for **AsyncAPI**: parse and summarize specs, validate, lint (Spectral), convert versions, generate models (Modelina), and run the AsyncAPI Generator from any MCP client (Cursor, Claude Desktop, VS Code, and others). Uses **stdio** by default—no port or API key for core features.
 
 ## Tools
 
-Most tools take the AsyncAPI document as **`source`**: inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file. **`generate`** and **`convert_spec`** require additional parameters (`template`, `targetDir`, `targetVersion`, etc.); see those sections.
-
-### Domain inspection (split by concern)
-
-Each tool parses once and returns only that slice (smaller responses than dumping a full document in one call).
+Most tools take **`source`**: inline YAML/JSON or an absolute path to a `.yaml`, `.yml`, or `.json` file. For full parameter shapes (enums, optional fields), use your MCP client’s tool definitions.
 
 | Tool | Purpose |
 |------|---------|
-| `get_asyncapi_info` | `asyncapi` version, `defaultContentType`, and full `info` (contact, license, tags, etc.) |
-| `list_asyncapi_servers` | Servers, hosts, protocols, variables, binding summaries |
-| `list_asyncapi_channels` | Channels, addresses, parameters, message ids, bindings |
-| `list_asyncapi_operations` | Operations, actions, operationId, channel/message links |
-| `list_asyncapi_messages` | Messages; default payload **summary**; optional `payloadDetail: full` + `payloadMaxDepth`; optional `includeHeadersSummary` |
-| `list_asyncapi_schemas` | Compact index: schema `id`, type summary, one-line `shape` |
-| `get_asyncapi_schema` | One component schema by **`id`** (the key under `components.schemas`), bounded depth |
-| `list_asyncapi_security_schemes` | Security schemes (`id` plus the parser’s JSON for each scheme, e.g. nested OAuth `flows` when present) |
+| `get_asyncapi_info` | AsyncAPI version, default content type, and `info` block (contact, license, tags, etc.) |
+| `list_asyncapi_servers` | Servers: URLs, hosts, protocols, variables, binding summaries |
+| `list_asyncapi_channels` | Channels: addresses, parameters, message ids, bindings |
+| `list_asyncapi_operations` | Operations: actions, `operationId`, linked channels and messages |
+| `list_asyncapi_messages` | Messages: one-line payload shape; optional headers summary |
+| `validate_document` | Parser validation: issues with severity, message, path, codes |
+| `lint_spec` | Spectral lint; optional custom ruleset path |
+| `convert_spec` | Convert toward a target spec version (e.g. 2.x → 3.x); needs `targetVersion` and optional output options |
+| `generate_models` | Typed models via Modelina; needs `language` and optional Modelina options |
+| `generate` | Generate from a template; needs `template`, absolute `targetDir`, optional `templateParams` |
 
-**Parameters:** each domain tool requires `source` (string). `get_asyncapi_schema` also requires `id`; optional `maxDepth` (default 8). `list_asyncapi_messages` supports `includeHeadersSummary`, `payloadDetail`, `payloadMaxDepth` — see tool descriptions in your MCP client.
-
-For validation diagnostics (severity, paths, codes), use `validate_document` below.
-
-### `validate_document`
-
-Validate structure with the AsyncAPI parser; returns issues (severity, message, path, optional codes).
-
-**Parameters:** `source` (string, required).
-
-### `lint_spec`
-
-Lint with Spectral using built-in AsyncAPI rulesets unless you pass a custom ruleset.
-
-**Parameters:** `source` (string, required); `ruleset` (string, optional)—path to a Spectral ruleset (may extend `spectral:asyncapi`).
-
-### `convert_spec`
-
-Convert toward a target version (e.g. 2.x → 3.x). Downgrades are not supported.
-
-**Parameters:** `source` (string, required); `targetVersion` (string, required, e.g. `"3.0.0"`); `outputFormat` (optional): `preserve` | `yaml` | `json`; `options` (object, optional)—passthrough for `@asyncapi/converter`.
-
-### `generate_models`
-
-Generate typed payload models via [@asyncapi/modelina](https://github.com/asyncapi/modelina).
-
-**Parameters:** `source` (string, required); `language` (enum, required): `java`, `typescript`, `csharp`, `go`, `javascript`, `dart`, `rust`, `python`, `kotlin`, `cpp`, `php`, `scala`; `options` (object, optional)—Modelina options (`indentation`, `processorOptions`, etc.).
-
-### `generate`
-
-Generate from a template with [@asyncapi/generator](https://github.com/asyncapi/generator). Output goes under **`targetDir`**.
-
-**Parameters:** `source` (string, required); `template` (string, required)—built-in template id or npm package (e.g. `@asyncapi/html-template`); `targetDir` (string, required, **absolute** path; created if missing); `templateParams` (object, optional).
+`convert_spec`, `generate_models`, and `generate` require extra arguments beyond `source`; see each tool’s schema in the client.
 
 ## Prerequisites
 

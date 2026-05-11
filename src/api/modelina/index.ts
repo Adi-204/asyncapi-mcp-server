@@ -15,31 +15,14 @@ import {
   ScalaGenerator,
   TypeScriptGenerator,
 } from "@asyncapi/modelina";
-import type { OutputModel, ProcessorOptions } from "@asyncapi/modelina";
+import type { OutputModel } from "@asyncapi/modelina";
 import { parseOptionsForInput, resolveInput } from "../helpers.js";
-import type { ModelLanguage } from "./languages.js";
-
-/** Re-exported from the leaf `./languages.js` module so callers that only need the
- * language list can import without paying the full Modelina runtime cost. */
-export { MODEL_LANGUAGE } from "./languages.js";
-export type { ModelLanguage } from "./languages.js";
-
-const EXTENSION_BY_LANG: Record<ModelLanguage, string> = {
-  java: "java",
-  typescript: "ts",
-  csharp: "cs",
-  go: "go",
-  javascript: "js",
-  dart: "dart",
-  rust: "rs",
-  python: "py",
-  kotlin: "kt",
-  cpp: "hpp",
-  php: "php",
-  scala: "scala",
-};
-
-type UnsafeKeys = "presets" | "defaultPreset" | "dependencyManager";
+import { EXTENSION_BY_LANG, type ModelLanguage } from "./languages.js";
+import {
+  type GenerateModelsResult,
+  type ModelinaGenerationOptionsInput,
+  type UnsafeKeys,
+} from "./types.js";
 
 function omitUnsafe<O extends Record<string, unknown>>(obj: O): Omit<O, UnsafeKeys> {
   const copy = { ...obj };
@@ -47,17 +30,6 @@ function omitUnsafe<O extends Record<string, unknown>>(obj: O): Omit<O, UnsafeKe
   delete copy.defaultPreset;
   delete copy.dependencyManager;
   return copy;
-}
-
-/** Safe, JSON-compatible options forwarded into Modelina generators */
-export interface ModelinaGenerationOptionsInput {
-  indentation?: {
-    type: "spaces" | "tabs";
-    size: number;
-  };
-  processorOptions?: ProcessorOptions;
-  /** Language-specific options (DeepPartial). `presets` / `dependencyManager` are stripped. */
-  generator?: Record<string, unknown>;
 }
 
 function buildGeneratorConstructorOptions(
@@ -118,13 +90,6 @@ function createGenerator(
       throw new Error(`Unsupported language: ${_exhaust}`);
     }
   }
-}
-
-export interface GenerateModelsResult {
-  /** Logical filename → generated source text */
-  files: Record<string, string>;
-  language: ModelLanguage;
-  modelCount: number;
 }
 
 function safeFileStem(modelName: string): string {

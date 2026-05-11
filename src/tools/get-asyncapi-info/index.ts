@@ -18,10 +18,10 @@ export const description = buildToolDescription({
 
 export const execute = async ({ source }: QueryParams) => {
   try {
-    const {
-      parseToDocument,
-      extractAsyncApiInfo,
-    } = await import("../../api/parser/index.js");
+    const { parseToDocument } = await import("../../api/parser/index.js");
+    const { extractAsyncApiInfo } = await import(
+      "../../api/parser/extractors.js"
+    );
     const doc = await parseToDocument(source);
     const data = extractAsyncApiInfo(doc);
     return {

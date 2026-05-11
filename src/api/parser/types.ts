@@ -27,12 +27,6 @@ export interface ValidationResult {
   summary?: DocumentIdentitySummary;
 }
 
-// --- Schema serialization ---
-
-export type SerializeSchemaOptions = {
-  maxDepth: number;
-};
-
 // --- Domain extractors ---
 
 /** Parser mix-in shape (not always reflected on every TypeScript interface). */
@@ -60,16 +54,9 @@ export type CoreTextFields = {
   description?: string;
 };
 
-export type ListMessagesOptions = {
-  includeHeadersSummary: boolean;
-  payloadDetail: "summary" | "full";
-  payloadMaxDepth: number;
-};
-
 // --- Bindings (schema-utils) ---
 
 export type BindingCompactEntry = {
   protocol: string;
   summary: string;
-  description: string;
 };

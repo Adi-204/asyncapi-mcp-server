@@ -1,8 +1,4 @@
-import type {
-  AsyncAPIDocumentInterface,
-  Diagnostic,
-  SchemaInterface,
-} from "@asyncapi/parser";
+import type { AsyncAPIDocumentInterface, Diagnostic } from "@asyncapi/parser";
 import { Parser as ParserClass } from "@asyncapi/parser";
 import { parseOptionsForInput, resolveInput } from "../helpers.js";
 import type { ValidationIssue, ValidationResult } from "./types.js";
@@ -26,38 +22,6 @@ function toValidationIssues(diagnostics: Diagnostic[]): ValidationIssue[] {
     };
   });
 }
-
-export type {
-  BindingCompactEntry,
-  ChannelWithTags,
-  CoreTextFields,
-  DocumentIdentitySummary,
-  ListMessagesOptions,
-  MaybeCoreText,
-  SerializeSchemaOptions,
-  ValidationIssue,
-  ValidationIssueSeverity,
-  ValidationResult,
-  WithTags,
-} from "./types.js";
-
-export {
-  bindingsToCompact,
-  schemaToOneLiner,
-  schemaTypeLabel,
-} from "./schema-utils.js";
-
-export {
-  extractAsyncApiInfo,
-  extractChannels,
-  extractMessages,
-  extractOperations,
-  extractSchemaSummaries,
-  extractSecuritySchemes,
-  extractServers,
-} from "./extractors.js";
-
-export { serializeSchema } from "./serialize-schema.js";
 
 async function runParse(input: string) {
   const content = await resolveInput(input);
@@ -83,16 +47,6 @@ export async function parseToDocument(
   }
 
   return document;
-}
-
-/**
- * Resolve a component schema by id (e.g. the key under `components.schemas`).
- */
-export function getSchemaById(
-  doc: AsyncAPIDocumentInterface,
-  id: string
-): SchemaInterface | undefined {
-  return doc.allSchemas().get(id);
 }
 
 /**

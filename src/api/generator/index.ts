@@ -58,8 +58,3 @@ export async function generateCode(
   };
 }
 
-export type {
-  GenerateOptions,
-  GenerateResult,
-  GeneratedFile,
-} from "./types.js";

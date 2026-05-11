@@ -1,23 +1,21 @@
-import * as nodeFs from "node:fs";
+import { promises as fsPromises } from "node:fs";
 import { resolve } from "node:path";
 import { DiagnosticSeverity } from "@stoplight/types";
+import { asyncapi as asyncapiRuleset } from "@stoplight/spectral-rulesets";
 import type { ISpectralDiagnostic } from "@stoplight/spectral-core";
 import { Spectral as SpectralCtor } from "@stoplight/spectral-core";
-import * as spectralRulesets from "@stoplight/spectral-rulesets";
 import { bundleAndLoadRuleset } from "@stoplight/spectral-ruleset-bundler/with-loader";
 import { fetch as spectralFetch } from "@stoplight/spectral-runtime";
 import { resolveInput } from "../helpers.js";
 import type { LintDiagnostic, LintResult } from "./types.js";
 
 const spectralIo = {
-  fs: { promises: nodeFs.promises },
+  fs: { promises: fsPromises },
   fetch: spectralFetch as (
     input: RequestInfo,
     init?: RequestInit
   ) => Promise<Response>,
 };
-
-export type { LintDiagnostic, LintResult } from "./types.js";
 
 function severityString(
   sev: DiagnosticSeverity
@@ -74,7 +72,7 @@ export async function lintSpec(
     spectral.setRuleset(rules);
   } else {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    spectral.setRuleset(spectralRulesets.asyncapi as any);
+    spectral.setRuleset(asyncapiRuleset as any);
   }
 
   const raw = await spectral.run(content);

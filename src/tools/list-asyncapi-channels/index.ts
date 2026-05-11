@@ -18,9 +18,8 @@ export const description = buildToolDescription({
 
 export const execute = async ({ source }: QueryParams) => {
   try {
-    const { parseToDocument, extractChannels } = await import(
-      "../../api/parser/index.js"
-    );
+    const { parseToDocument } = await import("../../api/parser/index.js");
+    const { extractChannels } = await import("../../api/parser/extractors.js");
     const doc = await parseToDocument(source);
     const data = extractChannels(doc);
     return {

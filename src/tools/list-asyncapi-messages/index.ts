@@ -10,43 +10,26 @@ export const description = buildToolDescription({
   name,
   title,
   summary:
-    "List messages with names, content types, payload summary (default) or full bounded schema, and optional headers summary.",
+    "List messages with names, content types, one-line payload shape, and optional one-line headers summary.",
   inputs: [
     "`source`: raw YAML/JSON or absolute path to spec file",
     "`includeHeadersSummary` (optional): add headers one-liner when true",
-    "`payloadDetail`: `summary` | `full`",
-    "`payloadMaxDepth` (optional): depth cap when `payloadDetail` is `full`",
   ],
   returns: ["JSON array of message objects."],
   examples: [
     { args: { source: "/abs/asyncapi.yaml" } },
     {
-      description: "Full payload trees (bounded depth)",
-      args: {
-        source: "/abs/asyncapi.yaml",
-        payloadDetail: "full",
-        payloadMaxDepth: 6,
-      },
+      args: { source: "/abs/asyncapi.yaml", includeHeadersSummary: true },
     },
   ],
 });
 
-export const execute = async ({
-  source,
-  includeHeadersSummary,
-  payloadDetail,
-  payloadMaxDepth,
-}: QueryParams) => {
+export const execute = async ({ source, includeHeadersSummary }: QueryParams) => {
   try {
-    const { parseToDocument, extractMessages } = await import(
-      "../../api/parser/index.js"
-    );
+    const { parseToDocument } = await import("../../api/parser/index.js");
+    const { extractMessages } = await import("../../api/parser/extractors.js");
     const doc = await parseToDocument(source);
-    const data = extractMessages(doc, {
-      includeHeadersSummary,
-      payloadDetail,
-      payloadMaxDepth,
-    });
+    const data = extractMessages(doc, includeHeadersSummary);
     return {
       content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
     };
